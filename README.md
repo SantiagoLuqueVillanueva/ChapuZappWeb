@@ -55,7 +55,7 @@ Todo el código está en `src/app/`:
 |---|---|
 | `core/` | Servicios únicos, interceptores y guards |
 | `shared/` | Componentes, pipes y modelos reutilizables |
-| `features/` | Una carpeta por área: auth, home, search, professional, appointments, messages, profile |
+| `features/` | Una carpeta por área: auth, home, search, professional, appointments, messages, profile y design-system (página de prueba en `/design-system`) |
 | `layout/` | Cabecera, pie y estructura común |
 
 Los ficheros de entorno (`environment.ts`) guardan la URL base de la API.
