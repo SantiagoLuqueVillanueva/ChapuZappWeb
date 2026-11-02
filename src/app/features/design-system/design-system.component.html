@@ -1,0 +1,60 @@
+<main class="mx-auto max-w-3xl space-y-10 p-4">
+  <header class="space-y-1">
+    <h1>Design system · ChapuZapp</h1>
+    <p class="text-muted">
+      Página de prueba para comparar colores, textos y radios con Figma (lámina Fundamentos).
+    </p>
+  </header>
+
+  <section class="space-y-4">
+    <h2>Colores</h2>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      @for (color of colors; track color.name) {
+        <div class="space-y-1">
+          <div class="h-16 rounded-md border border-line" [class]="color.classes"></div>
+          <p class="text-caption font-medium">{{ color.name }}</p>
+          <p class="text-tiny text-muted">{{ color.hex }} · Figma: {{ color.figma }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Tipografía</h2>
+    <div class="space-y-4">
+      @for (text of texts; track text.label) {
+        <div>
+          <p class="text-tiny text-muted">{{ text.label }}</p>
+          <p [class]="text.classes">Arreglos de confianza en tu barrio</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Radios</h2>
+    <div class="flex flex-wrap gap-4">
+      @for (radius of radii; track radius.name) {
+        <div class="space-y-1 text-center">
+          <div class="size-24 bg-primary" [class]="radius.classes"></div>
+          <p class="text-caption font-medium">{{ radius.name }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="space-y-4">
+    <h2>Botones de ejemplo</h2>
+    <div class="flex flex-wrap gap-3">
+      <button class="rounded-md bg-ink px-6 py-3 font-display text-card-title font-semibold text-white">
+        Primario
+      </button>
+      <button class="rounded-md border border-line bg-white px-6 py-3 font-display text-card-title font-semibold text-ink">
+        Secundario
+      </button>
+      <button class="rounded-md bg-primary px-6 py-3 font-display text-card-title font-semibold text-ink">
+        Suave
+      </button>
+    </div>
+  </section>
+</main>

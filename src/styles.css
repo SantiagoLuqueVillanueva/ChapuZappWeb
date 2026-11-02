@@ -1,1 +1,88 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/inter';
+
+@theme {
+  /* Tipografías: títulos y marca con Plus Jakarta Sans, texto con Inter */
+  --font-display: 'Plus Jakarta Sans Variable', sans-serif;
+  --font-sans: 'Inter Variable', sans-serif;
+
+  /* Colores de la marca (sacados de Figma · Fundamentos · Colores) */
+  --color-background: #f0fff9;
+  --color-surface: #f8fffc;
+  --color-card: #e6fbf2;
+  --color-primary: #a7f0d9;
+  --color-primary-soft: #ddf7ee;
+  --color-primary-line: #7fd6b8;
+  --color-accent: #4da8a0;
+  --color-ink: #2a4a47;
+  --color-muted: #6b7f7b;
+  --color-line: #d5ebe3;
+  --color-busy: #e8ebea;
+  --color-busy-text: #8a9693;
+  --color-map: #e6f3ec;
+  --color-map-block: #dae8e1;
+  --color-map-green: #c3eadb;
+  --color-grabber: #cfe5dc;
+
+  /* Radios (Figma · Radios) */
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 1.75rem;
+  --radius-full: 9999px;
+
+  /* Tamaños de texto y altura de línea (Figma · Tipografía) */
+  --text-display: 1.75rem;
+  --text-display--line-height: 2.125rem;
+  --text-h1: 1.5rem;
+  --text-h1--line-height: 1.875rem;
+  --text-h2: 1.25rem;
+  --text-h2--line-height: 1.625rem;
+  --text-h3: 1rem;
+  --text-h3--line-height: 1.375rem;
+  --text-card-title: 0.9375rem;
+  --text-card-title--line-height: 1.25rem;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-chip: 0.8125rem;
+  --text-chip--line-height: 1.125rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-tiny: 0.6875rem;
+  --text-tiny--line-height: 0.875rem;
+}
+
+/* Estilos base globales */
+@layer base {
+  html {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+  }
+}
