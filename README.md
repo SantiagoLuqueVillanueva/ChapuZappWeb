@@ -35,6 +35,18 @@ ng serve
 
 Abre http://localhost:4200 en el navegador.
 
+## Comandos útiles
+
+| Comando | Para qué sirve |
+|---|---|
+| `ng serve` | Arranca la web en local (http://localhost:4200) |
+| `npm run lint` | Revisa el código con ESLint |
+| `npm run format` | Da formato al código con Prettier |
+| `npm run format:check` | Comprueba el formato sin cambiar nada |
+| `ng build` | Compila la web para producción |
+
+Antes de abrir un pull request, ejecuta `npm run lint` y `npm run format`.
+
 ## Estructura de carpetas
 
 Todo el código está en `src/app/`:
