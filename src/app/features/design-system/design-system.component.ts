@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 interface ColorSample {
   name: string;
@@ -20,7 +21,7 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [],
+  imports: [ButtonComponent],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {
@@ -45,12 +46,30 @@ export class DesignSystemComponent {
   ];
 
   readonly texts: TextSample[] = [
-    { label: 'Display · Plus Jakarta Sans SemiBold 28/34', classes: 'font-display text-display font-semibold' },
-    { label: 'Marca · Plus Jakarta Sans Medium 28/34', classes: 'font-display text-display font-medium' },
-    { label: 'H1 · Plus Jakarta Sans SemiBold 24/30', classes: 'font-display text-h1 font-semibold' },
-    { label: 'H2 · Plus Jakarta Sans SemiBold 20/26', classes: 'font-display text-h2 font-semibold' },
-    { label: 'H3 · Plus Jakarta Sans SemiBold 16/22', classes: 'font-display text-h3 font-semibold' },
-    { label: 'Título tarjeta y botón · Plus Jakarta Sans SemiBold 15/20', classes: 'font-display text-card-title font-semibold' },
+    {
+      label: 'Display · Plus Jakarta Sans SemiBold 28/34',
+      classes: 'font-display text-display font-semibold',
+    },
+    {
+      label: 'Marca · Plus Jakarta Sans Medium 28/34',
+      classes: 'font-display text-display font-medium',
+    },
+    {
+      label: 'H1 · Plus Jakarta Sans SemiBold 24/30',
+      classes: 'font-display text-h1 font-semibold',
+    },
+    {
+      label: 'H2 · Plus Jakarta Sans SemiBold 20/26',
+      classes: 'font-display text-h2 font-semibold',
+    },
+    {
+      label: 'H3 · Plus Jakarta Sans SemiBold 16/22',
+      classes: 'font-display text-h3 font-semibold',
+    },
+    {
+      label: 'Título tarjeta y botón · Plus Jakarta Sans SemiBold 15/20',
+      classes: 'font-display text-card-title font-semibold',
+    },
     { label: 'Cuerpo · Inter Regular 14/20', classes: 'text-body' },
     { label: 'Cuerpo medio · Inter Medium 14/20', classes: 'text-body font-medium' },
     { label: 'Chip · Inter Medium 13/18', classes: 'text-chip font-medium' },
