@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { CategoryCardComponent } from '../../shared/components/category-card/category-card.component';
 
 interface ColorSample {
   name: string;
@@ -21,7 +22,7 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [ButtonComponent],
+  imports: [ButtonComponent, CategoryCardComponent],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {
