@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CategoryCardComponent } from '../../shared/components/category-card/category-card.component';
+import {
+  SearchBarComponent,
+  SearchFilters,
+} from '../../shared/components/search-bar/search-bar.component';
 
 interface ColorSample {
   name: string;
@@ -22,10 +26,17 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [ButtonComponent, CategoryCardComponent],
+  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {
+  lastSearch?: SearchFilters;
+
+  onSearch(filters: SearchFilters): void {
+    this.lastSearch = filters;
+    console.log('Búsqueda ejecutada en design-system:', filters);
+  }
+
   // Las clases se escriben completas para que Tailwind las detecte
   readonly colors: ColorSample[] = [
     { name: 'background', figma: 'bg', hex: '#F0FFF9', classes: 'bg-background' },
