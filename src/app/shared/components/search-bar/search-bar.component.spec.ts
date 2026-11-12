@@ -19,12 +19,10 @@ describe('SearchBarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit searchSubmitted event with query and location on submit', () => {
+  it('should emit searchSubmitted with query and location on submit', () => {
     spyOn(component.searchSubmitted, 'emit');
 
-    component.query = 'Fontanero';
-    component.location = 'Madrid';
-    component.onSubmit();
+    component.onSubmit('Fontanero', 'Madrid');
 
     expect(component.searchSubmitted.emit).toHaveBeenCalledWith({
       query: 'Fontanero',
@@ -32,12 +30,10 @@ describe('SearchBarComponent', () => {
     });
   });
 
-  it('should trim inputs when emitting search', () => {
+  it('should trim whitespace when emitting', () => {
     spyOn(component.searchSubmitted, 'emit');
 
-    component.query = '  Electricista  ';
-    component.location = '  Barcelona  ';
-    component.onSubmit();
+    component.onSubmit('  Electricista  ', '  Barcelona  ');
 
     expect(component.searchSubmitted.emit).toHaveBeenCalledWith({
       query: 'Electricista',
