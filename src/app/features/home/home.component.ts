@@ -8,6 +8,7 @@ import { CategoryCardComponent } from '../../shared/components/category-card/cat
 interface CategoryItem {
   name: string;
   subtitle: string;
+  icon: string;
 }
 
 interface StepItem {
@@ -24,12 +25,12 @@ interface StepItem {
 })
 export class HomeComponent {
   readonly categories: CategoryItem[] = [
-    { name: 'Fontanería', subtitle: '24 profesionales' },
-    { name: 'Electricidad', subtitle: '18 profesionales' },
-    { name: 'Pintura', subtitle: '15 profesionales' },
-    { name: 'Carpintería', subtitle: '11 profesionales' },
-    { name: 'Cerrajería', subtitle: '9 profesionales' },
-    { name: 'Electrodomésticos', subtitle: '13 profesionales' },
+    { name: 'Fontanería', subtitle: '24 profesionales', icon: '/images/icono fontaneria.png' },
+    { name: 'Electricidad', subtitle: '18 profesionales', icon: '/images/icono electricista.png' },
+    { name: 'Pintura', subtitle: '15 profesionales', icon: '/images/icono pintura.png' },
+    { name: 'Carpintería', subtitle: '11 profesionales', icon: '' },
+    { name: 'Cerrajería', subtitle: '9 profesionales', icon: '/images/icono cerrajeria.png' },
+    { name: 'Electrodomésticos', subtitle: '13 profesionales', icon: '' },
   ];
 
   readonly steps: StepItem[] = [

@@ -5,8 +5,7 @@
     <div class="max-w-2xl space-y-6">
       <div class="space-y-3">
         <h1
-          class="font-display text-display font-bold tracking-tight text-ink sm:text-[2.5rem] sm:leading-[3rem]"
-        >
+          class="font-display text-display font-bold tracking-tight text-ink sm:text-[2.5rem] sm:leading-[3rem]">
           Encuentra a tu manitas de confianza
         </h1>
         <p class="text-body text-muted sm:text-card-title">
@@ -26,27 +25,26 @@
         Ver todas →
       </button>
     </div>
-
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       @for (category of categories; track category.name) {
-        <app-category-card [name]="category.name" [subtitle]="category.subtitle" />
+        <app-category-card
+          [name]="category.name"
+          [subtitle]="category.subtitle"
+          [icon]="category.icon"
+        />
       }
     </div>
   </section>
   <section class="space-y-6">
     <div class="space-y-1">
       <span class="text-chip font-semibold uppercase tracking-wider text-accent"
-        >Cómo funciona</span
-      >
+        >Cómo funciona</span>
       <h2 class="font-display text-h1 font-bold text-ink">Tu arreglo, en tres pasos</h2>
     </div>
-
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
       @for (step of steps; track step.number) {
         <div class="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-6 shadow-xs">
-          <div
-            class="flex size-10 items-center justify-center rounded-full bg-ink font-display text-card-title font-bold text-white"
-          >
+          <div class="flex size-10 items-center justify-center rounded-full bg-ink font-display text-card-title font-bold text-white">
             {{ step.number }}
           </div>
           <h3 class="font-display text-h3 font-semibold text-ink">{{ step.title }}</h3>
