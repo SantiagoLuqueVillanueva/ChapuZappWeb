@@ -1,5 +1,9 @@
 <div class="flex items-center gap-5 rounded-lg border border-line bg-white p-6">
-  <div class="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary-soft"></div>
+  <div class="flex size-14 shrink-0 items-center justify-center rounded-full bg-primary-soft">
+    @if (icon()) {
+      <img [src]="icon()" [alt]="name()" class="size-8 object-contain" />
+    }
+  </div>
   <div class="flex flex-1 flex-col gap-1">
     <p class="font-display text-[17px] leading-6 font-semibold text-ink">{{ name() }}</p>
     <p class="text-body text-muted">{{ subtitle() }}</p>
