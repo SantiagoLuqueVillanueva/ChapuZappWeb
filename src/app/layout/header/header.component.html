@@ -5,23 +5,44 @@
     </a>
 
     <nav class="hidden items-center gap-8 md:flex" aria-label="Navegación principal">
-      <a routerLink="/" class="text-body font-medium text-muted transition-colors hover:text-ink">
-        Cómo funciona
+      <a
+        routerLink="/"
+        [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="text-ink font-semibold border-b-2 border-ink"
+        class="pb-1 text-body font-medium text-muted transition-colors hover:text-ink"
+      >
+        Inicio
       </a>
-      <a routerLink="/" class="text-body font-medium text-muted transition-colors hover:text-ink">
-        Categorías
+      <a
+        routerLink="/buscar"
+        routerLinkActive="text-ink font-semibold border-b-2 border-ink"
+        class="pb-1 text-body font-medium text-muted transition-colors hover:text-ink"
+      >
+        Búsqueda
       </a>
-      <a routerLink="/" class="text-body font-medium text-muted transition-colors hover:text-ink">
+      <a
+        routerLink="/mis-citas"
+        routerLinkActive="text-ink font-semibold border-b-2 border-ink"
+        class="pb-1 text-body font-medium text-muted transition-colors hover:text-ink"
+      >
         Para profesionales
       </a>
-      <a routerLink="/" class="text-body font-medium text-muted transition-colors hover:text-ink">
-        Ayuda
+      <a
+        routerLink="/mensajes"
+        routerLinkActive="text-ink font-semibold border-b-2 border-ink"
+        class="pb-1 text-body font-medium text-muted transition-colors hover:text-ink"
+      >
+        Chats
       </a>
     </nav>
 
     <div class="flex items-center gap-2 sm:gap-3">
-      <app-button variant="secondary" size="sm">Iniciar sesión</app-button>
-      <app-button variant="primary" size="sm">Registrarse</app-button>
+      <a routerLink="/login">
+        <app-button variant="secondary" size="sm">Iniciar sesión</app-button>
+      </a>
+      <a routerLink="/registro">
+        <app-button variant="primary" size="sm">Registrarse</app-button>
+      </a>
     </div>
   </div>
 </header>

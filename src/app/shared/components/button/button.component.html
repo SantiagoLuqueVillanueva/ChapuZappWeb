@@ -1,1 +1,6 @@
-<button [class]="variantClasses[variant()] + ' ' + sizeClasses[size()]"><ng-content /></button>
+<button
+  class="cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.98]"
+  [class]="variantClasses[variant()] + ' ' + sizeClasses[size()]"
+>
+  <ng-content />
+</button>
