@@ -1,1 +1,108 @@
-<p>Perfil en construcción</p>
+<div class="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8">
+  <aside class="h-fit rounded-2xl border border-line bg-surface p-3">
+    <nav class="flex flex-col gap-1 text-body" aria-label="Menú de la cuenta">
+      <span class="rounded-xl bg-primary px-4 py-3 font-medium text-ink">Mi perfil</span>
+      <span class="px-4 py-3 text-muted">Direcciones</span>
+      <span class="px-4 py-3 text-muted">Notificaciones</span>
+      <span class="px-4 py-3 text-muted">Favoritos</span>
+      <span class="px-4 py-3 text-muted">Privacidad y seguridad</span>
+      <span class="px-4 py-3 text-muted">Ajustes</span>
+      <span class="px-4 py-3 text-muted">Ayuda</span>
+      <hr class="my-1 border-line" />
+      <button
+        type="button"
+        (click)="cerrarSesion()"
+        class="cursor-pointer rounded-xl px-4 py-3 text-left text-ink hover:bg-primary-soft"
+      >
+        Cerrar sesión
+      </button>
+    </nav>
+  </aside>
+
+  <div class="space-y-6">
+    <section class="flex flex-col items-center gap-6 rounded-2xl bg-primary p-6 sm:flex-row">
+      <app-avatar [nombre]="usuario().nombre" [foto]="usuario().foto" size="lg" />
+      <div class="text-center sm:text-left">
+        <h1 class="font-display text-display font-semibold text-ink">{{ usuario().nombre }}</h1>
+        <p class="text-body text-ink">
+          {{ usuario().email }}
+          @if (usuario().ciudad) {
+            · {{ usuario().ciudad }}
+          }
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-line bg-surface p-6">
+      <h2 class="mb-6 font-display text-h2 font-semibold text-ink">Datos personales</h2>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()" class="grid gap-4 md:grid-cols-2">
+        <app-form-field
+          label="Nombre y apellidos"
+          inputId="perfil-nombre"
+          [error]="error('nombre')"
+        >
+          <input
+            id="perfil-nombre"
+            type="text"
+            formControlName="nombre"
+            autocomplete="name"
+            [class.border-red-500]="error('nombre')"
+            class="w-full rounded-full border border-line bg-surface px-5 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+          />
+        </app-form-field>
+
+        <app-form-field label="Correo electrónico" inputId="perfil-email" [error]="error('email')">
+          <input
+            id="perfil-email"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            [class.border-red-500]="error('email')"
+            class="w-full rounded-full border border-line bg-surface px-5 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+          />
+        </app-form-field>
+
+        <app-form-field label="Teléfono" inputId="perfil-telefono" [error]="error('telefono')">
+          <input
+            id="perfil-telefono"
+            type="tel"
+            formControlName="telefono"
+            autocomplete="tel"
+            placeholder="+34 600 123 456"
+            [class.border-red-500]="error('telefono')"
+            class="w-full rounded-full border border-line bg-surface px-5 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+          />
+        </app-form-field>
+
+        <app-form-field label="Barrio" inputId="perfil-ciudad" [error]="error('ciudad')">
+          <input
+            id="perfil-ciudad"
+            type="text"
+            formControlName="ciudad"
+            placeholder="Campanillas, Málaga"
+            [class.border-red-500]="error('ciudad')"
+            class="w-full rounded-full border border-line bg-surface px-5 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+          />
+        </app-form-field>
+
+        <div class="flex flex-col-reverse items-center justify-end gap-3 sm:flex-row md:col-span-2">
+          @if (guardado()) {
+            <p
+              role="status"
+              class="rounded-xl bg-primary-soft px-4 py-2 text-body text-ink sm:mr-auto"
+            >
+              Cambios guardados
+            </p>
+          }
+          <app-button variant="secondary" (click)="cancelar()" [disabled]="form.pristine">
+            Cancelar
+          </app-button>
+          <app-button type="submit" [disabled]="form.invalid || form.pristine">
+            Guardar cambios
+          </app-button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>
