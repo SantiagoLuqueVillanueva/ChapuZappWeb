@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CategoryCardComponent } from '../../shared/components/category-card/category-card.component';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import {
   SearchBarComponent,
   SearchFilters,
@@ -26,7 +27,7 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent],
+  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent, AvatarComponent],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {
