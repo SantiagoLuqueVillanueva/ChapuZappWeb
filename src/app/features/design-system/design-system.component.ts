@@ -6,6 +6,7 @@ import {
   SearchBarComponent,
   SearchFilters,
 } from '../../shared/components/search-bar/search-bar.component';
+import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
 
 interface ColorSample {
   name: string;
@@ -27,7 +28,7 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent, AvatarComponent],
+  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent, AvatarComponent, FormFieldComponent],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {
