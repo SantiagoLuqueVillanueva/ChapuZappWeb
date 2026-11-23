@@ -28,7 +28,13 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent, AvatarComponent, FormFieldComponent],
+  imports: [
+    ButtonComponent,
+    CategoryCardComponent,
+    SearchBarComponent,
+    AvatarComponent,
+    FormFieldComponent,
+  ],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {

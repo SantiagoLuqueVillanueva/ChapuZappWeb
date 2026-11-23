@@ -24,7 +24,10 @@ export class ProfileComponent {
   form = this.fb.nonNullable.group({
     nombre: [this.usuario().nombre, [Validators.required, Validators.minLength(2)]],
     email: [this.usuario().email, [Validators.required, Validators.email]],
-    telefono: [this.usuario().telefono ?? '', [Validators.required, Validators.pattern(PATRON_TELEFONO)]],
+    telefono: [
+      this.usuario().telefono ?? '',
+      [Validators.required, Validators.pattern(PATRON_TELEFONO)],
+    ],
     ciudad: [this.usuario().ciudad ?? '', Validators.required],
   });
 
