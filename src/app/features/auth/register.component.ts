@@ -12,7 +12,6 @@ import { RouterLink } from '@angular/router';
         <p class="text-body text-muted">Regístrate gratis y reserva en minutos.</p>
       </div>
 
-      <!-- Selector de Rol estilo Figma (Soy cliente / Soy profesional) -->
       <div class="flex rounded-xl border border-line bg-surface p-1">
         <button
           type="button"

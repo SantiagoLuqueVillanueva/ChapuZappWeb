@@ -7,7 +7,6 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   imports: [RouterOutlet, RouterLink],
   template: `
     <div class="flex min-h-screen bg-background">
-      <!-- Panel izquierdo verde (visible en lg+) -->
       <aside
         class="relative hidden w-1/2 flex-col justify-between bg-primary/40 p-10 lg:flex xl:p-14"
       >
@@ -29,7 +28,6 @@ import { RouterOutlet, RouterLink } from '@angular/router';
           </div>
         </div>
 
-        <!-- Tarjeta testimonio de Figma -->
         <div class="max-w-md rounded-2xl bg-white p-5 shadow-xs border border-line/60">
           <div class="flex items-center gap-1 text-[#2f9999] text-xs">
             <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
@@ -51,9 +49,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
         </div>
       </aside>
 
-      <!-- Panel derecho: formulario (Login / Registro) -->
       <main class="flex flex-1 flex-col justify-between p-6 sm:p-10 lg:p-14">
-        <!-- Logo en móvil / tablet -->
         <div class="lg:hidden mb-6">
           <a routerLink="/" class="inline-block">
             <img src="/images/logo-horizontal.svg" alt="ChapuZapp" class="h-8 w-auto" />
