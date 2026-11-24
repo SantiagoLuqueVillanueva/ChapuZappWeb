@@ -79,4 +79,21 @@
       </div>
     }
   </section>
+  <div class="flex items-center gap-4">
+    <app-avatar nombre="Ana García" size="lg" />
+    <app-avatar nombre="Pepe" />
+  </div>
+
+  <app-form-field
+    label="Correo electrónico"
+    inputId="demo-email"
+    error="Introduce un correo válido"
+  >
+    <input
+      id="demo-email"
+      type="email"
+      placeholder="ana@correo.com"
+      class="w-full rounded-full border border-line bg-surface px-5 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+    />
+  </app-form-field>
 </main>

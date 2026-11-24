@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CategoryCardComponent } from '../../shared/components/category-card/category-card.component';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import {
   SearchBarComponent,
   SearchFilters,
 } from '../../shared/components/search-bar/search-bar.component';
+import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
 
 interface ColorSample {
   name: string;
@@ -26,7 +28,13 @@ interface RadiusSample {
 
 @Component({
   selector: 'app-design-system',
-  imports: [ButtonComponent, CategoryCardComponent, SearchBarComponent],
+  imports: [
+    ButtonComponent,
+    CategoryCardComponent,
+    SearchBarComponent,
+    AvatarComponent,
+    FormFieldComponent,
+  ],
   templateUrl: './design-system.component.html',
 })
 export class DesignSystemComponent {

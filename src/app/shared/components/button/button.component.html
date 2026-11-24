@@ -1,5 +1,7 @@
 <button
-  class="cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.98]"
+  [type]="type()"
+  [disabled]="disabled()"
+  class="cursor-pointer transition-opacity hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
   [class]="variantClasses[variant()] + ' ' + sizeClasses[size()]"
 >
   <ng-content />
