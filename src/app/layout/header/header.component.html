@@ -37,12 +37,59 @@
     </nav>
 
     <div class="flex items-center gap-2 sm:gap-3">
-      <a routerLink="/login">
-        <app-button variant="secondary" size="sm">Iniciar sesión</app-button>
-      </a>
-      <a routerLink="/registro">
-        <app-button variant="primary" size="sm">Registrarse</app-button>
-      </a>
+      @if (auth.usuario(); as usuario) {
+        <div class="relative">
+          <button
+            type="button"
+            (click)="alternarMenu()"
+            [attr.aria-expanded]="menuAbierto()"
+            aria-haspopup="menu"
+            class="flex cursor-pointer items-center gap-2 rounded-full p-1 pr-3 transition-colors hover:bg-card"
+          >
+            <app-avatar [nombre]="usuario.nombre" [foto]="usuario.foto" size="sm" />
+            <span class="hidden text-body font-medium text-ink sm:inline">{{ usuario.nombre }}</span>
+          </button>
+
+          @if (menuAbierto()) {
+            <div
+              role="menu"
+              class="absolute right-0 mt-2 w-48 overflow-hidden rounded-xl border border-line bg-surface shadow-lg"
+            >
+              <a
+                routerLink="/perfil"
+                (click)="cerrarMenu()"
+                role="menuitem"
+                class="block px-4 py-2 text-body text-ink hover:bg-card"
+              >
+                Mi perfil
+              </a>
+              <a
+                routerLink="/mis-citas"
+                (click)="cerrarMenu()"
+                role="menuitem"
+                class="block px-4 py-2 text-body text-ink hover:bg-card"
+              >
+                Mis citas
+              </a>
+              <button
+                type="button"
+                (click)="cerrarSesion()"
+                role="menuitem"
+                class="block w-full cursor-pointer border-t border-line px-4 py-2 text-left text-body text-ink hover:bg-card"
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a routerLink="/login">
+          <app-button variant="secondary" size="sm">Iniciar sesión</app-button>
+        </a>
+        <a routerLink="/registro">
+          <app-button variant="primary" size="sm">Registrarse</app-button>
+        </a>
+      }
     </div>
   </div>
 </header>
