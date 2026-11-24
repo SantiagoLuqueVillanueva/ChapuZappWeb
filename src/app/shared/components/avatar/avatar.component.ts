@@ -7,7 +7,7 @@ import { Component, computed, input } from '@angular/core';
 })
 export class AvatarComponent {
   nombre = input.required<string>();
-  foto = input<string>();
+  foto = input<string | null>();
   size = input<'sm' | 'lg'>('sm');
 
   iniciales = computed(() =>
