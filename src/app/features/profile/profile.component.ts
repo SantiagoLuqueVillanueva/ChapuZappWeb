@@ -1,8 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Usuario } from '../../shared/models/usuario.model';
-import { USUARIO_MOCK } from './usuario.mock';
+import { AuthService } from '../../core/services/auth.service';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -17,8 +16,9 @@ const PATRON_TELEFONO = /^(\+34)?\s?[6-9](\s?\d){8}$/;
 export class ProfileComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private auth = inject(AuthService);
 
-  usuario = signal<Usuario>(USUARIO_MOCK);
+  usuario = computed(() => this.auth.usuario()!);
   guardado = signal(false);
 
   form = this.fb.nonNullable.group({
@@ -43,10 +43,11 @@ export class ProfileComponent {
 
   guardar(): void {
     if (this.form.invalid || this.form.pristine) return;
-    this.usuario.update((actual) => ({ ...actual, ...this.form.getRawValue() }));
-    this.form.markAsPristine();
-    this.guardado.set(true);
-    setTimeout(() => this.guardado.set(false), 3000);
+    this.auth.actualizarPerfil(this.form.getRawValue()).subscribe(() => {
+      this.form.markAsPristine();
+      this.guardado.set(true);
+      setTimeout(() => this.guardado.set(false), 3000);
+    });
   }
 
   cancelar(): void {
@@ -60,6 +61,7 @@ export class ProfileComponent {
   }
 
   cerrarSesion(): void {
+    this.auth.logout();
     this.router.navigate(['/']);
   }
 }
