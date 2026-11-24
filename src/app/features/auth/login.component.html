@@ -1,0 +1,57 @@
+<div class="space-y-6">
+  <div class="space-y-1">
+    <h1 class="font-display text-h1 font-bold text-ink">Iniciar sesión</h1>
+    <p class="text-body text-muted">Accede a tu cuenta de ChapuZapp</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="entrar()" novalidate class="space-y-4">
+    <app-form-field label="Correo electrónico" inputId="login-email" [error]="error('email')">
+      <input
+        id="login-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        placeholder="ejemplo@correo.com"
+        [class.border-red-500]="error('email')"
+        class="w-full rounded-xl border border-line bg-surface px-4 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+      />
+    </app-form-field>
+
+    <app-form-field label="Contraseña" inputId="login-password" [error]="error('password')">
+      <input
+        id="login-password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        placeholder="••••••••"
+        [class.border-red-500]="error('password')"
+        class="w-full rounded-xl border border-line bg-surface px-4 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+      />
+    </app-form-field>
+
+    @if (errorLogin()) {
+      <p role="alert" class="rounded-xl bg-red-50 px-4 py-3 text-caption text-red-700">
+        {{ errorLogin() }}
+      </p>
+    }
+
+    <div class="pt-2">
+      <app-button
+        type="submit"
+        variant="primary"
+        size="md"
+        [disabled]="cargando()"
+        class="block w-full [&>button]:w-full"
+      >
+        {{ cargando() ? 'Entrando...' : 'Iniciar sesión' }}
+      </app-button>
+    </div>
+  </form>
+
+  <div class="border-t border-line pt-4 text-center text-body text-muted">
+    ¿No tienes cuenta todavía?
+    <a routerLink="/registro" class="font-semibold text-accent hover:underline">
+      Regístrate gratis
+    </a>
+  </div>
+</div>
