@@ -26,10 +26,9 @@ export const routes: Routes = [
       },
       {
         path: 'profesional/:id/reservar',
+        canActivate: [authGuard],
         loadComponent: () =>
-          import('./features/professional/professional-detail.component').then(
-            (m) => m.ProfessionalDetailComponent,
-          ),
+          import('./features/booking/booking.component').then((m) => m.BookingComponent),
       },
       {
         path: 'mis-citas',
