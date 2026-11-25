@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import {
   SearchBarComponent,
   SearchFilters,
@@ -24,6 +25,7 @@ interface StepItem {
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
+  private readonly router = inject(Router);
   readonly categories: CategoryItem[] = [
     { name: 'Fontanería', subtitle: '24 profesionales', icon: '/images/icono fontaneria.png' },
     { name: 'Electricidad', subtitle: '18 profesionales', icon: '/images/icono electricista.png' },
@@ -52,6 +54,9 @@ export class HomeComponent {
   ];
 
   onSearch(filters: SearchFilters): void {
-    console.log('Búsqueda lanzada en Home:', filters);
+    const queryParams: Record<string, string> = {};
+    if (filters.query) queryParams['q'] = filters.query;
+    if (filters.location) queryParams['location'] = filters.location;
+    this.router.navigate(['/buscar'], { queryParams });
   }
 }
