@@ -73,6 +73,16 @@
               >
                 Mis citas
               </a>
+              @if (usuario.rol === 'PROFESIONAL') {
+                <a
+                  routerLink="/agenda"
+                  (click)="cerrarMenu()"
+                  role="menuitem"
+                  class="block px-4 py-2 text-body text-ink hover:bg-card"
+                >
+                  Mi agenda
+                </a>
+              }
               <button
                 type="button"
                 (click)="cerrarSesion()"

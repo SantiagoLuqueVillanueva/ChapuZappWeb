@@ -1,0 +1,242 @@
+<div class="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+  <section>
+    <h1 class="font-display text-display font-semibold text-ink">Hola, {{ usuario().nombre }}</h1>
+    <p class="text-body text-muted">
+      Esta es tu semana: del {{ lunes() | date: "d 'de' MMMM" }} al
+      {{ domingo() | date: "d 'de' MMMM 'de' y" }}
+    </p>
+  </section>
+
+  <div class="grid gap-6 lg:grid-cols-[1fr_360px]">
+    <section class="rounded-2xl border border-line bg-surface p-4 sm:p-6">
+      <div class="mb-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          (click)="semanaAnterior()"
+          aria-label="Semana anterior"
+          class="h-9 w-9 cursor-pointer rounded-full border border-line text-ink hover:bg-card"
+        >
+          ‹
+        </button>
+        <h2 class="font-display text-h2 font-semibold text-ink">
+          {{ lunes() | date: 'd MMM' }} – {{ domingo() | date: 'd MMM y' }}
+        </h2>
+        <button
+          type="button"
+          (click)="semanaSiguiente()"
+          aria-label="Semana siguiente"
+          class="h-9 w-9 cursor-pointer rounded-full border border-line text-ink hover:bg-card"
+        >
+          ›
+        </button>
+        <app-button variant="secondary" size="sm" (click)="irAHoy()">Hoy</app-button>
+      </div>
+
+      @if (citasDeLaSemana().length === 0) {
+        <p class="rounded-xl bg-card p-6 text-center text-body text-muted">
+          No tienes citas esta semana. Tu agenda está vacía.
+        </p>
+      } @else {
+        <div class="grid gap-3 md:grid-cols-7">
+          @for (dia of dias(); track dia.getTime()) {
+            <div class="rounded-xl border border-line p-2">
+              <p
+                class="mb-2 rounded-full px-2 py-1 text-center text-chip font-medium capitalize text-ink"
+                [class.bg-primary]="esHoy(dia)"
+              >
+                {{ dia | date: 'EEE d' }}
+              </p>
+
+              @for (cita of citasDelDia(dia); track cita.idCita) {
+                <button
+                  type="button"
+                  (click)="abrirDetalle(cita)"
+                  class="mb-2 w-full cursor-pointer rounded-lg p-2 text-left text-caption"
+                  [class.bg-primary]="cita.estado === 'PROGRAMADA'"
+                  [class.border]="cita.estado === 'PENDIENTE'"
+                  [class.border-dashed]="cita.estado === 'PENDIENTE'"
+                  [class.border-accent]="cita.estado === 'PENDIENTE'"
+                  [class.bg-busy]="cita.estado === 'CANCELADA'"
+                  [class.line-through]="cita.estado === 'CANCELADA'"
+                >
+                  <span class="block font-semibold text-ink">{{
+                    cita.inicio | date: 'HH:mm'
+                  }}</span>
+                  <span class="block text-ink">{{ cita.servicioNombre }}</span>
+                  <span class="block text-muted">{{ cita.clienteNombre }}</span>
+                </button>
+              } @empty {
+                <p class="text-center text-caption text-muted">Sin citas</p>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <div class="mt-4 flex flex-wrap gap-4 text-caption text-muted">
+        <span class="flex items-center gap-1"
+          ><span class="h-3 w-3 rounded-full bg-primary"></span>Confirmada</span
+        >
+        <span class="flex items-center gap-1"
+          ><span class="h-3 w-3 rounded-full border border-dashed border-accent"></span>Pendiente de
+          aceptar</span
+        >
+        <span class="flex items-center gap-1"
+          ><span class="h-3 w-3 rounded-full bg-busy"></span>Cancelada</span
+        >
+      </div>
+    </section>
+
+    <div class="space-y-6">
+      <section class="rounded-2xl border border-line bg-surface p-4 sm:p-6">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="font-display text-h2 font-semibold text-ink">Solicitudes</h2>
+          <span class="rounded-full bg-primary px-3 py-1 text-caption text-ink">
+            {{ solicitudes().length }} nuevas
+          </span>
+        </div>
+
+        @for (cita of solicitudes(); track cita.idCita) {
+          <article class="mb-3 rounded-xl bg-card p-4">
+            <p class="font-medium text-ink">{{ cita.clienteNombre }}</p>
+            <p class="text-caption text-muted">
+              {{ cita.servicioNombre }} · {{ cita.inicio | date: 'EEE d, HH:mm' }}
+            </p>
+            @if (cita.nota) {
+              <p class="my-2 text-body text-ink">“{{ cita.nota }}”</p>
+            }
+            <div class="mt-3 grid grid-cols-2 gap-2">
+              <app-button size="sm" (click)="aceptar(cita)">Aceptar</app-button>
+              <app-button variant="secondary" size="sm" (click)="rechazar(cita)"
+                >Rechazar</app-button
+              >
+            </div>
+          </article>
+        } @empty {
+          <p class="text-body text-muted">No tienes solicitudes pendientes.</p>
+        }
+      </section>
+
+      <section class="rounded-2xl border border-line bg-surface p-4 sm:p-6">
+        <h2 class="mb-4 font-display text-h2 font-semibold text-ink">Tu horario</h2>
+
+        @if (!editandoHorario()) {
+          <ul class="mb-4 space-y-2 text-body">
+            @for (nombre of nombreDias; track nombre; let i = $index) {
+              <li class="flex justify-between">
+                <span class="text-ink">{{ nombre }}</span>
+                @if (tramoDe(i + 1); as tramo) {
+                  <span class="text-ink">{{ tramo.horaInicio }} – {{ tramo.horaFin }}</span>
+                } @else {
+                  <span class="text-muted">Cerrado</span>
+                }
+              </li>
+            }
+          </ul>
+          @if (horarioGuardado()) {
+            <p class="mb-3 text-caption text-accent">Horario guardado.</p>
+          }
+          <app-button variant="soft" (click)="editarHorario()">Editar horario</app-button>
+        } @else {
+          <form [formGroup]="horarioForm" (ngSubmit)="guardarHorario()" class="space-y-3">
+            <div formArrayName="dias" class="space-y-3">
+              @for (dia of diasForm.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="rounded-xl border border-line p-3">
+                  <label class="flex items-center gap-2 text-body font-medium text-ink">
+                    <input type="checkbox" formControlName="activo" />
+                    {{ nombreDias[i] }}
+                  </label>
+
+                  @if (dia.controls.activo.value) {
+                    <div class="mt-2 grid grid-cols-2 gap-2">
+                      <label class="text-caption text-muted">
+                        Desde
+                        <input
+                          type="time"
+                          formControlName="horaInicio"
+                          class="mt-1 w-full rounded-lg border border-line bg-white px-2 py-1.5 text-body text-ink"
+                        />
+                      </label>
+                      <label class="text-caption text-muted">
+                        Hasta
+                        <input
+                          type="time"
+                          formControlName="horaFin"
+                          class="mt-1 w-full rounded-lg border border-line bg-white px-2 py-1.5 text-body text-ink"
+                        />
+                      </label>
+                    </div>
+                  }
+
+                  @if (dia.errors?.['finAntesDeInicio'] && dia.touched) {
+                    <p class="mt-1 text-caption text-red-600">
+                      La hora de fin tiene que ser posterior a la de inicio.
+                    </p>
+                  }
+                </div>
+              }
+            </div>
+
+            <app-button type="submit">Guardar horario</app-button>
+          </form>
+        }
+      </section>
+    </div>
+  </div>
+</div>
+
+@if (citaSeleccionada(); as cita) {
+  <div class="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
+    <button
+      type="button"
+      aria-label="Cerrar detalle"
+      class="absolute inset-0 cursor-default bg-black/40"
+      (click)="cerrarDetalle()"
+    ></button>
+
+    <div
+      class="relative w-full max-w-md rounded-2xl bg-surface p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titulo-detalle"
+    >
+      <h2 id="titulo-detalle" class="mb-4 font-display text-h2 font-semibold text-ink">
+        {{ cita.servicioNombre }}
+      </h2>
+      <dl class="space-y-2 text-body">
+        <div class="flex justify-between gap-4">
+          <dt class="text-muted">Cliente</dt>
+          <dd class="text-ink">{{ cita.clienteNombre }}</dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-muted">Dirección</dt>
+          <dd class="text-right text-ink">{{ cita.direccion }}</dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-muted">Hora</dt>
+          <dd class="text-ink">
+            {{ cita.inicio | date: 'EEEE d MMM, HH:mm' }} – {{ cita.fin | date: 'HH:mm' }}
+          </dd>
+        </div>
+        <div class="flex justify-between gap-4">
+          <dt class="text-muted">Estado</dt>
+          <dd class="text-ink">{{ textoEstado(cita.estado) }}</dd>
+        </div>
+        @if (cita.nota) {
+          <div class="flex justify-between gap-4">
+            <dt class="text-muted">Nota</dt>
+            <dd class="text-right text-ink">{{ cita.nota }}</dd>
+          </div>
+        }
+      </dl>
+
+      <div class="mt-6 flex flex-wrap justify-end gap-2">
+        @if (cita.estado === 'PENDIENTE') {
+          <app-button variant="secondary" size="sm" (click)="rechazar(cita)">Rechazar</app-button>
+          <app-button size="sm" (click)="aceptar(cita)">Aceptar</app-button>
+        }
+        <app-button variant="soft" size="sm" (click)="cerrarDetalle()">Cerrar</app-button>
+      </div>
+    </div>
+  </div>
+}
