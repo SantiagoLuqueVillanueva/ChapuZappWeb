@@ -2,12 +2,12 @@
   <img
     [src]="foto()"
     [alt]="nombre()"
-    class="rounded-full object-cover"
+    class="rounded-full object-cover shrink-0"
     [class]="sizeClasses[size()]"
   />
 } @else {
   <div
-    class="flex items-center justify-center rounded-full bg-surface font-display font-semibold text-ink"
+    class="flex shrink-0 items-center justify-center rounded-full bg-card font-display font-bold text-ink"
     [class]="sizeClasses[size()]"
   >
     {{ iniciales() }}

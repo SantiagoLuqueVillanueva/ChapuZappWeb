@@ -1,0 +1,553 @@
+<div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 space-y-6">
+  <nav class="flex items-center gap-2 text-caption text-muted" aria-label="Miga de pan">
+    <a routerLink="/" class="hover:text-ink">Profesionales</a>
+    <span>/</span>
+    @if (professional(); as prof) {
+      <a routerLink="/buscar" class="hover:text-ink">{{ prof.profession }}</a>
+      <span>/</span>
+      <span class="font-medium text-ink">{{ prof.name }}</span>
+    } @else {
+      <span class="font-medium text-ink">Profesional no encontrado</span>
+    }
+  </nav>
+
+  @if (isLoading()) {
+    <div
+      class="flex min-h-[400px] flex-col items-center justify-center space-y-3 rounded-3xl border border-line bg-surface p-10 text-center"
+    >
+      <div class="size-10 animate-spin rounded-full border-4 border-line border-t-accent"></div>
+      <p class="font-display text-card-title font-medium text-ink">
+        Cargando perfil del profesional...
+      </p>
+      <p class="text-caption text-muted">Obteniendo información, servicios y disponibilidad.</p>
+    </div>
+  } @else if (simulateError()) {
+    <div class="rounded-3xl border border-red-200 bg-red-50/60 p-8 text-center sm:p-12">
+      <div
+        class="mx-auto flex size-12 items-center justify-center rounded-full bg-red-100 text-red-600 font-bold"
+      >
+        !
+      </div>
+      <h2 class="mt-4 font-display text-h2 font-bold text-red-900">
+        Ha ocurrido un error al cargar el perfil
+      </h2>
+      <p class="mt-1 text-body text-red-700">
+        No hemos podido conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.
+      </p>
+      <div class="mt-6">
+        <button
+          type="button"
+          (click)="simulateError.set(false)"
+          class="rounded-xl bg-ink px-6 py-2.5 font-display text-card-title font-semibold text-white hover:opacity-90 cursor-pointer"
+        >
+          Reintentar
+        </button>
+      </div>
+    </div>
+  } @else if (!professional()) {
+    <div class="rounded-3xl border border-line bg-surface p-8 text-center sm:p-14 space-y-4">
+      <div
+        class="mx-auto flex size-14 items-center justify-center rounded-full bg-primary-soft text-accent font-display text-h1 font-bold"
+      >
+        ?
+      </div>
+      <div class="space-y-1">
+        <h2 class="font-display text-h1 font-bold text-ink">Profesional no encontrado</h2>
+        <p class="text-body text-muted max-w-md mx-auto">
+          No existe ningún profesional con el ID
+          <span class="font-bold text-ink">{{ id() }}</span> o ha dejado de prestar servicios.
+        </p>
+      </div>
+      <div class="pt-2 flex justify-center gap-3">
+        <a
+          routerLink="/"
+          class="rounded-xl border border-line bg-white px-5 py-2.5 font-display text-card-title font-semibold text-ink hover:bg-card"
+        >
+          Volver al inicio
+        </a>
+        <a
+          routerLink="/buscar"
+          class="rounded-xl bg-ink px-5 py-2.5 font-display text-card-title font-semibold text-white hover:opacity-90"
+        >
+          Explorar profesionales
+        </a>
+      </div>
+    </div>
+  } @else {
+    @let prof = professional()!;
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div class="space-y-6 lg:col-span-2">
+        <div class="rounded-3xl border border-line bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div class="flex items-center gap-4">
+              <app-avatar [nombre]="prof.name" size="lg" />
+              <div class="space-y-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h1 class="font-display text-2xl sm:text-3xl font-bold text-ink">
+                    {{ prof.name }}
+                  </h1>
+                  @if (prof.verified) {
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-primary-soft px-2.5 py-0.5 text-tiny font-semibold text-accent"
+                    >
+                      <svg class="size-3.5 fill-current" viewBox="0 0 20 20">
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      Verificado
+                    </span>
+                  }
+                </div>
+                <p class="text-body text-muted">
+                  {{ prof.profession }} · {{ prof.experienceYears }} años de experiencia
+                </p>
+                <div class="flex flex-wrap items-center gap-3 text-caption text-muted pt-1">
+                  <span class="flex items-center gap-1 font-semibold text-ink">
+                    <span class="text-accent">★</span> {{ prof.rating }}
+                    <span class="font-normal text-muted">({{ prof.reviewsCount }} reseñas)</span>
+                  </span>
+                  <span>·</span>
+                  <span>{{ prof.location }}</span>
+                  <span>·</span>
+                  <span class="text-accent font-medium">{{ prof.distance }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2 sm:pt-0">
+              <button
+                type="button"
+                class="flex size-10 items-center justify-center rounded-full border border-line text-muted hover:border-ink hover:text-ink cursor-pointer"
+                title="Guardar en favoritos"
+              >
+                <svg
+                  class="size-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                  />
+                </svg>
+              </button>
+              <a
+                routerLink="/mensajes"
+                class="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 font-display text-caption font-semibold text-ink hover:bg-primary/80 transition-colors cursor-pointer"
+              >
+                Chatear
+              </a>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="rounded-2xl border border-line bg-surface p-3.5">
+              <p class="font-display text-card-title font-bold text-ink">
+                {{ prof.stats.experience }}
+              </p>
+              <p class="text-tiny text-muted">Experiencia</p>
+            </div>
+            <div class="rounded-2xl border border-line bg-surface p-3.5">
+              <p class="font-display text-card-title font-bold text-ink">
+                {{ prof.stats.completedJobs }}
+              </p>
+              <p class="text-tiny text-muted">Trabajos hechos</p>
+            </div>
+            <div class="rounded-2xl border border-line bg-surface p-3.5">
+              <p class="font-display text-card-title font-bold text-ink">
+                {{ prof.stats.schedule }}
+              </p>
+              <p class="text-tiny text-muted">Disponibilidad</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex rounded-full border border-line bg-card p-1 max-w-xs">
+          <button
+            type="button"
+            (click)="activeTab.set('precios')"
+            [class]="
+              activeTab() === 'precios'
+                ? 'bg-white text-ink font-semibold shadow-xs'
+                : 'text-muted hover:text-ink'
+            "
+            class="flex-1 rounded-full py-1.5 text-center text-caption font-medium transition-all cursor-pointer"
+          >
+            Precios
+          </button>
+          <button
+            type="button"
+            (click)="activeTab.set('resenas')"
+            [class]="
+              activeTab() === 'resenas'
+                ? 'bg-white text-ink font-semibold shadow-xs'
+                : 'text-muted hover:text-ink'
+            "
+            class="flex-1 rounded-full py-1.5 text-center text-caption font-medium transition-all cursor-pointer"
+          >
+            Reseñas
+          </button>
+          <button
+            type="button"
+            (click)="activeTab.set('sobre-mi')"
+            [class]="
+              activeTab() === 'sobre-mi'
+                ? 'bg-white text-ink font-semibold shadow-xs'
+                : 'text-muted hover:text-ink'
+            "
+            class="flex-1 rounded-full py-1.5 text-center text-caption font-medium transition-all cursor-pointer"
+          >
+            Sobre mí
+          </button>
+        </div>
+
+        @if (activeTab() === 'precios') {
+          <div class="space-y-3">
+            @for (service of prof.services; track service.id) {
+              <div
+                class="flex items-center justify-between rounded-2xl border border-line bg-white p-5 transition-shadow hover:shadow-xs"
+              >
+                <div class="space-y-0.5">
+                  <h3 class="font-display text-card-title font-semibold text-ink">
+                    {{ service.name }}
+                  </h3>
+                  <p class="text-caption text-muted">{{ service.duration }}</p>
+                </div>
+                <div class="flex items-center gap-4">
+                  <span class="font-display text-h3 font-bold text-ink">{{ service.price }} €</span>
+                  <button
+                    type="button"
+                    (click)="selectService(service)"
+                    [class]="
+                      selectedService()?.id === service.id
+                        ? 'bg-accent text-white'
+                        : 'bg-primary-soft text-ink hover:bg-primary'
+                    "
+                    class="rounded-full px-4 py-1.5 font-display text-caption font-semibold transition-colors cursor-pointer"
+                  >
+                    {{ selectedService()?.id === service.id ? 'Seleccionado' : 'Elegir' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (activeTab() === 'resenas') {
+          <div class="space-y-5">
+            <div class="rounded-3xl border border-line bg-white p-6">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                <div class="sm:col-span-5 rounded-2xl bg-card p-6 text-center space-y-1.5">
+                  <span class="font-display text-5xl font-extrabold text-ink leading-none"
+                    >4,9</span
+                  >
+                  <div class="flex items-center justify-center gap-1 text-accent text-lg">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <p class="text-caption text-muted">{{ prof.reviewsCount }} reseñas</p>
+                </div>
+
+                <div class="sm:col-span-7 space-y-2 text-tiny">
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">5 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 82%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">105</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">4 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 14%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">18</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">3 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 3%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">3</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">2 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 1%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">1</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">1 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 1%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('todas')"
+                [class]="
+                  activeReviewFilter() === 'todas'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                Todas
+              </button>
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('con-fotos')"
+                [class]="
+                  activeReviewFilter() === 'con-fotos'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                Con fotos
+              </button>
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('5-estrellas')"
+                [class]="
+                  activeReviewFilter() === '5-estrellas'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                5 estrellas
+              </button>
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('recientes')"
+                [class]="
+                  activeReviewFilter() === 'recientes'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                Recientes
+              </button>
+            </div>
+
+            @if (filteredReviews().length === 0) {
+              <div class="rounded-2xl border border-line bg-surface p-8 text-center space-y-2">
+                <p class="font-display text-card-title font-semibold text-ink">
+                  No hay reseñas para este filtro
+                </p>
+                <button
+                  type="button"
+                  (click)="activeReviewFilter.set('todas')"
+                  class="rounded-full bg-accent px-4 py-1.5 text-caption font-semibold text-white cursor-pointer"
+                >
+                  Ver todas
+                </button>
+              </div>
+            } @else {
+              <div class="space-y-3">
+                @for (review of filteredReviews(); track review.id) {
+                  <div class="rounded-2xl border border-line bg-white p-5 space-y-3">
+                    <div class="flex items-center gap-3">
+                      <app-avatar [nombre]="review.author" size="sm" />
+                      <div>
+                        <p
+                          class="font-display text-card-title font-semibold text-ink leading-tight"
+                        >
+                          {{ review.author }}
+                        </p>
+                        <p class="text-tiny text-muted">{{ review.date }}</p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1 text-accent text-sm">
+                      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                    <p class="text-caption text-ink/90 leading-relaxed">{{ review.comment }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        @if (activeTab() === 'sobre-mi') {
+          <div class="space-y-4">
+            <div class="rounded-3xl border border-line bg-white p-6 space-y-4">
+              <h3 class="font-display text-card-title font-semibold text-ink">Presentación</h3>
+              <p class="text-body text-muted leading-relaxed">
+                {{ prof.about }}
+              </p>
+
+              @if (prof.specialties && prof.specialties.length > 0) {
+                <div class="space-y-2 border-t border-line pt-4">
+                  <h4 class="text-caption font-semibold text-ink">Especialidades</h4>
+                  <div class="flex flex-wrap gap-2">
+                    @for (spec of prof.specialties; track spec) {
+                      <span
+                        class="rounded-full bg-surface border border-line px-3 py-1 text-tiny text-ink"
+                      >
+                        {{ spec }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (prof.serviceAreas && prof.serviceAreas.length > 0) {
+                <div class="space-y-2 border-t border-line pt-4">
+                  <h4 class="text-caption font-semibold text-ink">Zonas de servicio</h4>
+                  <div class="flex flex-wrap gap-2">
+                    @for (area of prof.serviceAreas; track area) {
+                      <span class="rounded-full bg-card px-3 py-1 text-tiny font-medium text-ink">
+                        📍 {{ area }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="rounded-2xl border border-line bg-card p-5 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="text-accent text-lg">🛡️</span>
+                <h4 class="font-display text-caption font-bold text-ink">Garantía ChapuZapp</h4>
+              </div>
+              <p class="text-tiny text-muted leading-relaxed">
+                Este profesional cuenta con identidad verificada, seguro de responsabilidad civil
+                activo y compromiso de calidad y satisfacción con soporte en cada cita.
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <aside class="lg:col-span-1">
+        <div class="sticky top-20 rounded-3xl border border-line bg-white p-6 space-y-5 shadow-xs">
+          <div class="flex items-center justify-between">
+            <h2 class="font-display text-h3 font-bold text-ink">Reserva</h2>
+            <span class="font-display text-h2 font-bold text-ink">
+              {{ selectedService()?.price ?? 45 }} €
+            </span>
+          </div>
+          <p class="text-caption text-muted">
+            {{ selectedService()?.name ?? 'Cambio de grifo' }} ·
+            {{ selectedService()?.duration ?? '45-60 min' }}
+          </p>
+
+          <div class="space-y-2 border-t border-line pt-4">
+            <div class="flex items-center justify-between text-caption font-semibold text-ink">
+              <span>Octubre 2026</span>
+              <div class="flex gap-1 text-muted">
+                <button type="button" class="size-6 rounded hover:bg-card cursor-pointer">‹</button>
+                <button type="button" class="size-6 rounded hover:bg-card cursor-pointer">›</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-7 gap-1 text-center text-tiny font-medium text-muted">
+              <div>Lun</div>
+              <div>Mar</div>
+              <div>Mié</div>
+              <div>Jue</div>
+              <div>Vie</div>
+              <div>Sáb</div>
+              <div>Dom</div>
+            </div>
+            <div class="grid grid-cols-7 gap-1 text-center">
+              @for (day of [12, 13, 14, 15, 16, 17, 18]; track day) {
+                <button
+                  type="button"
+                  (click)="selectedDay.set(day)"
+                  [class]="
+                    selectedDay() === day
+                      ? 'bg-primary text-ink font-bold border-2 border-ink'
+                      : 'bg-surface text-ink hover:bg-primary-soft'
+                  "
+                  class="size-8 rounded-lg text-caption transition-all cursor-pointer flex items-center justify-center mx-auto"
+                >
+                  {{ day }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-caption font-semibold text-ink">Hora de llegada</p>
+            <div class="grid grid-cols-4 gap-2">
+              @for (time of ['09:00', '12:00', '17:00', '19:00']; track time) {
+                <button
+                  type="button"
+                  (click)="selectedTime.set(time)"
+                  [class]="
+                    selectedTime() === time
+                      ? 'bg-ink text-white font-semibold'
+                      : 'border border-line bg-white text-muted hover:text-ink'
+                  "
+                  class="rounded-xl py-2 text-center text-tiny cursor-pointer transition-colors"
+                >
+                  {{ time }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="booking-address" class="text-caption font-semibold text-ink"
+              >Dirección</label
+            >
+            <input
+              id="booking-address"
+              type="text"
+              value="Calle Alan Turing, 12 · 2.º B"
+              class="w-full rounded-xl border border-line bg-surface px-3 py-2 text-caption text-ink focus:outline-none"
+            />
+          </div>
+
+          <div class="rounded-2xl bg-primary-soft p-4 space-y-1.5 text-caption text-ink">
+            <p class="font-bold">Tu cita, de un vistazo</p>
+            <p>Jue, {{ selectedDay() }} OCT · {{ selectedTime() }}</p>
+            <p class="text-muted">Calle Alan Turing, 12 · 2.º B</p>
+            <div class="flex justify-between border-t border-line/60 pt-2 font-bold">
+              <span>Precio estimado</span>
+              <span>{{ selectedService()?.price ?? 45 }} €</span>
+            </div>
+          </div>
+
+          <a
+            [routerLink]="['/profesional', prof.id, 'reservar']"
+            class="block w-full text-center rounded-xl bg-ink py-3 font-display text-card-title font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98] cursor-pointer"
+          >
+            Confirmar cita
+          </a>
+
+          <p class="text-center text-tiny text-muted">
+            Podrás reprogramar o cancelar desde el chat.
+          </p>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

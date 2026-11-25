@@ -32,7 +32,9 @@ import { Appointment } from '../../shared/models/appointment.model';
           <button
             type="button"
             class="rounded-lg px-4 py-2.5 font-display text-card-title font-semibold"
-            [class]="pestana === 'proximas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'"
+            [class]="
+              pestana === 'proximas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'
+            "
             (click)="pestana = 'proximas'"
           >
             Próximas
@@ -40,7 +42,9 @@ import { Appointment } from '../../shared/models/appointment.model';
           <button
             type="button"
             class="rounded-lg px-4 py-2.5 font-display text-card-title font-semibold"
-            [class]="pestana === 'pasadas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'"
+            [class]="
+              pestana === 'pasadas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'
+            "
             (click)="pestana = 'pasadas'"
           >
             Pasadas
@@ -50,7 +54,9 @@ import { Appointment } from '../../shared/models/appointment.model';
         @if (citasMostradas.length === 0) {
           <div class="mt-6 rounded-lg border border-line bg-card p-6 text-center">
             <p class="text-body text-ink">
-              {{ pestana === 'proximas' ? 'No tienes citas próximas.' : 'No tienes citas pasadas.' }}
+              {{
+                pestana === 'proximas' ? 'No tienes citas próximas.' : 'No tienes citas pasadas.'
+              }}
             </p>
             <a
               routerLink="/buscar"
@@ -62,7 +68,9 @@ import { Appointment } from '../../shared/models/appointment.model';
         } @else {
           <ul class="mt-6 space-y-4">
             @for (cita of citasMostradas; track cita.id) {
-              <li class="flex items-start justify-between gap-4 rounded-lg border border-line bg-card p-4">
+              <li
+                class="flex items-start justify-between gap-4 rounded-lg border border-line bg-card p-4"
+              >
                 <div>
                   <p class="font-display text-card-title font-semibold text-ink">
                     {{ cita.professionalName }}

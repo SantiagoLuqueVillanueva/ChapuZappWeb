@@ -1,0 +1,270 @@
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-8">
+  <div class="space-y-4">
+    <div
+      class="flex items-center rounded-full border-2 border-line bg-white p-1.5 shadow-xs transition-colors focus-within:border-accent"
+    >
+      <label for="search-input" class="sr-only">Buscar profesionales o servicios</label>
+      <div class="pl-4 pr-2 text-muted">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="size-5"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+          />
+        </svg>
+      </div>
+
+      <input
+        id="search-input"
+        type="text"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchInput($event)"
+        (keyup.enter)="onSearchSubmit()"
+        placeholder="¿Qué necesitas arreglar? (ej. cambiar grifo, electricista, pintar salón...)"
+        class="w-full bg-transparent text-body text-ink placeholder:text-muted focus:outline-none"
+      />
+
+      @if (searchQuery().length > 0) {
+        <button
+          type="button"
+          (click)="clearSearch()"
+          aria-label="Borrar búsqueda"
+          class="mr-2 flex size-7 items-center justify-center rounded-full text-muted hover:bg-surface hover:text-ink cursor-pointer transition-colors"
+        >
+          ✕
+        </button>
+      }
+
+      <button
+        type="button"
+        (click)="onSearchSubmit()"
+        class="rounded-full bg-ink px-6 py-2.5 font-display text-caption font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer"
+      >
+        Buscar
+      </button>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2 pt-1">
+      <span class="text-caption font-medium text-muted">Populares cerca de ti:</span>
+      @for (tag of popularTags; track tag) {
+        <button
+          type="button"
+          (click)="applyPopularTag(tag)"
+          [class]="
+            searchQuery().toLowerCase() === tag.toLowerCase()
+              ? 'bg-accent text-white font-semibold'
+              : 'bg-white border border-line text-ink hover:bg-card'
+          "
+          class="rounded-full px-3.5 py-1 text-tiny transition-colors cursor-pointer"
+        >
+          {{ tag }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="rounded-3xl border border-line bg-surface p-5 space-y-4">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="text-caption font-semibold text-ink mr-2">Sector:</span>
+      @for (sec of sectors; track sec) {
+        <button
+          type="button"
+          (click)="setSector(sec)"
+          [class]="
+            selectedSector() === sec
+              ? 'bg-ink text-white font-semibold'
+              : 'bg-white border border-line text-muted hover:text-ink'
+          "
+          class="rounded-full px-3.5 py-1.5 text-caption transition-colors cursor-pointer capitalize"
+        >
+          {{ sec === 'todos' ? 'Todos los sectores' : sec }}
+        </button>
+      }
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4 border-t border-line/60 pt-4">
+      <div class="flex flex-wrap items-center gap-4">
+        <div class="flex items-center gap-2">
+          <label for="price-filter" class="text-caption font-semibold text-ink">Precio máx:</label>
+          <select
+            id="price-filter"
+            [ngModel]="maxPrice()"
+            (ngModelChange)="setMaxPrice(+$event)"
+            class="rounded-xl border border-line bg-white px-3 py-1.5 text-caption text-ink focus:outline-none cursor-pointer"
+          >
+            <option [value]="0">Cualquier precio</option>
+            <option [value]="30">Hasta 30 €/h</option>
+            <option [value]="40">Hasta 40 €/h</option>
+            <option [value]="50">Hasta 50 €/h</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <label for="rating-filter" class="text-caption font-semibold text-ink"
+            >Valoración mínima:</label
+          >
+          <select
+            id="rating-filter"
+            [ngModel]="minRating()"
+            (ngModelChange)="setMinRating(+$event)"
+            class="rounded-xl border border-line bg-white px-3 py-1.5 text-caption text-ink focus:outline-none cursor-pointer"
+          >
+            <option [value]="0">Todas las valoraciones</option>
+            <option [value]="4.5">4.5 o más ★</option>
+            <option [value]="4.8">4.8 o más ★</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label for="sort-filter" class="text-caption font-semibold text-ink">Ordenar por:</label>
+        <select
+          id="sort-filter"
+          [ngModel]="sortBy()"
+          (ngModelChange)="setSortBy($event)"
+          class="rounded-xl border border-line bg-white px-3 py-1.5 text-caption text-ink focus:outline-none cursor-pointer"
+        >
+          <option value="valoracion">Mejor valorados</option>
+          <option value="precio">Precio más económico</option>
+          <option value="cercania">Más cercanos</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between">
+    <p class="text-caption text-muted">
+      Mostrando <span class="font-bold text-ink">{{ totalResults() }}</span> profesionales
+      disponibles
+      @if (totalResults() > 0) {
+        <span class="text-muted/70"> · Página {{ currentPage() }} de {{ totalPages() }}</span>
+      }
+    </p>
+
+    @if (
+      searchQuery().length > 0 ||
+      selectedSector() !== 'todos' ||
+      maxPrice() > 0 ||
+      minRating() > 0 ||
+      sortBy() !== 'valoracion'
+    ) {
+      <button
+        type="button"
+        (click)="resetFilters()"
+        class="text-caption font-semibold text-accent hover:underline cursor-pointer"
+      >
+        Limpiar filtros
+      </button>
+    }
+  </div>
+
+  @if (hasError()) {
+    <div class="rounded-3xl border border-red-200 bg-red-50 p-8 text-center space-y-3" role="alert">
+      <p class="font-display text-card-title font-semibold text-red-800">
+        Ocurrió un error al cargar los profesionales
+      </p>
+      <p class="text-caption text-red-600">
+        Por favor, comprueba tu conexión y vuelve a intentarlo.
+      </p>
+      <button
+        type="button"
+        (click)="retry()"
+        class="rounded-full bg-red-600 px-5 py-2 text-caption font-semibold text-white hover:bg-red-700 cursor-pointer transition-colors"
+      >
+        Reintentar
+      </button>
+    </div>
+  } @else if (isLoading()) {
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+        <div class="animate-pulse rounded-3xl border border-line bg-white p-6 space-y-4">
+          <div class="flex items-center gap-4">
+            <div class="size-14 rounded-full bg-card"></div>
+            <div class="flex-1 space-y-2">
+              <div class="h-4 w-1/2 rounded bg-card"></div>
+              <div class="h-3 w-1/3 rounded bg-surface"></div>
+            </div>
+          </div>
+          <div class="h-10 rounded-xl bg-surface"></div>
+        </div>
+      }
+    </div>
+  } @else if (paginatedProfessionals().length === 0) {
+    <div class="rounded-3xl border border-line bg-surface p-12 text-center space-y-4">
+      <div
+        class="mx-auto flex size-14 items-center justify-center rounded-full bg-card text-2xl text-accent"
+      >
+        🔍
+      </div>
+      <div class="space-y-1">
+        <h3 class="font-display text-card-title font-bold text-ink">
+          No se han encontrado profesionales
+        </h3>
+        <p class="text-body text-muted max-w-md mx-auto">
+          Prueba a cambiar los términos de búsqueda o a relajar los filtros de precio o valoración.
+        </p>
+      </div>
+      <button
+        type="button"
+        (click)="resetFilters()"
+        class="rounded-full bg-ink px-6 py-2.5 font-display text-caption font-semibold text-white transition-opacity hover:opacity-90 cursor-pointer"
+      >
+        Limpiar filtros
+      </button>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      @for (prof of paginatedProfessionals(); track prof.id) {
+        <app-professional-card [professional]="prof" />
+      }
+    </div>
+
+    @if (totalPages() > 1) {
+      <nav
+        class="flex items-center justify-center gap-2 pt-6"
+        aria-label="Paginación de resultados"
+      >
+        <button
+          type="button"
+          (click)="goToPage(currentPage() - 1)"
+          [disabled]="currentPage() === 1"
+          class="rounded-full border border-line bg-white px-4 py-2 text-caption font-medium text-ink transition-colors hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        >
+          ← Anterior
+        </button>
+
+        @for (page of [].constructor(totalPages()); track $index) {
+          <button
+            type="button"
+            (click)="goToPage($index + 1)"
+            [class]="
+              currentPage() === $index + 1
+                ? 'bg-ink text-white font-bold'
+                : 'bg-white border border-line text-muted hover:text-ink'
+            "
+            class="size-9 rounded-full text-caption transition-colors cursor-pointer flex items-center justify-center"
+          >
+            {{ $index + 1 }}
+          </button>
+        }
+
+        <button
+          type="button"
+          (click)="goToPage(currentPage() + 1)"
+          [disabled]="currentPage() === totalPages()"
+          class="rounded-full border border-line bg-white px-4 py-2 text-caption font-medium text-ink transition-colors hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+        >
+          Siguiente →
+        </button>
+      </nav>
+    }
+  }
+</div>

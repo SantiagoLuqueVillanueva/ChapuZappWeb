@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { authGuard } from './core/guards/auth.guard';
+import { profesionalGuard } from './core/guards/professional.guard';
 
 export const routes: Routes = [
   {
@@ -55,6 +56,12 @@ export const routes: Routes = [
           import('./features/design-system/design-system.component').then(
             (m) => m.DesignSystemComponent,
           ),
+      },
+      {
+        path: 'agenda',
+        canActivate: [authGuard, profesionalGuard],
+        loadComponent: () =>
+          import('./features/agenda/agenda.component').then((m) => m.AgendaComponent),
       },
     ],
   },
