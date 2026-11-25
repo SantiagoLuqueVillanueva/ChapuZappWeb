@@ -1,7 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MOCK_PROFESSIONALS_LIST, Professional } from '../professional/professional.mock';
+import { SEARCH_PROFESSIONALS, SearchProfessional } from './search.mock';
 
 type SortOption = 'valoracion' | 'precio' | 'cercania';
 
@@ -15,18 +15,18 @@ export class SearchComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  readonly searchQuery = signal<string>('');
-  readonly selectedSector = signal<string>('todos');
-  readonly maxPrice = signal<number>(0);
-  readonly minRating = signal<number>(0);
+  readonly searchQuery = signal('');
+  readonly selectedSector = signal('todos');
+  readonly maxPrice = signal(0);
+  readonly minRating = signal(0);
   readonly sortBy = signal<SortOption>('valoracion');
-  readonly currentPage = signal<number>(1);
+  readonly currentPage = signal(1);
   readonly pageSize = 6;
 
-  readonly isLoading = signal<boolean>(false);
-  readonly hasError = signal<boolean>(false);
+  readonly isLoading = signal(false);
+  readonly hasError = signal(false);
 
-  readonly sectors: string[] = [
+  readonly sectors = [
     'todos',
     'Fontanería',
     'Electricidad',
@@ -38,7 +38,7 @@ export class SearchComponent implements OnInit {
     'Jardinería',
   ];
 
-  readonly popularTags: string[] = [
+  readonly popularTags = [
     'Cambiar grifo',
     'Desatasco',
     'Montar muebles',
@@ -48,7 +48,7 @@ export class SearchComponent implements OnInit {
     'Cerrajero',
   ];
 
-  readonly allProfessionals = signal<Professional[]>(MOCK_PROFESSIONALS_LIST);
+  readonly allProfessionals = signal<SearchProfessional[]>(SEARCH_PROFESSIONALS);
 
   readonly filteredProfessionals = computed(() => {
     const query = this.searchQuery().trim().toLowerCase();
@@ -62,8 +62,7 @@ export class SearchComponent implements OnInit {
         const matchesName = prof.name.toLowerCase().includes(query);
         const matchesProfession = prof.profession.toLowerCase().includes(query);
         const matchesSector = prof.sector.toLowerCase().includes(query);
-        const matchesSpecialties = prof.specialties?.some((s) => s.toLowerCase().includes(query));
-        if (!matchesName && !matchesProfession && !matchesSector && !matchesSpecialties) {
+        if (!matchesName && !matchesProfession && !matchesSector) {
           return false;
         }
       }

@@ -1,6 +1,12 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MOCK_PROFESSIONALS, Professional, ReviewItem, ServiceItem } from './professional.mock';
+import {
+  JAVIER_MORENO,
+  MOCK_PROFESSIONALS,
+  Professional,
+  ReviewItem,
+  ServiceItem,
+} from './professional.mock';
 
 type ReviewFilter = 'todas' | 'con-fotos' | '5-estrellas' | 'recientes';
 
@@ -21,14 +27,12 @@ export class ProfessionalDetailComponent {
   readonly selectedDay = signal<number>(15);
   readonly selectedTime = signal<string>('17:00');
 
-  readonly professional = computed<Professional | null>(() => {
-    const profId = this.id();
-    return MOCK_PROFESSIONALS[profId] ?? null;
+  readonly professional = computed<Professional>(() => {
+    return MOCK_PROFESSIONALS[this.id()] ?? JAVIER_MORENO;
   });
 
   readonly filteredReviews = computed<ReviewItem[]>(() => {
     const prof = this.professional();
-    if (!prof) return [];
     const filter = this.activeReviewFilter();
 
     switch (filter) {
