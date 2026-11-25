@@ -24,6 +24,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'profesional/:id/reservar',
+        loadComponent: () =>
+          import('./features/professional/professional-detail.component').then(
+            (m) => m.ProfessionalDetailComponent,
+          ),
+      },
+      {
         path: 'mis-citas',
         canActivate: [authGuard],
         loadComponent: () =>
