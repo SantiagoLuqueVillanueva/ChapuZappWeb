@@ -179,16 +179,16 @@
           </div>
         </div>
 
-        <div class="flex rounded-full border border-line bg-white p-1 max-w-md">
+        <div class="flex rounded-full border border-line bg-card p-1 max-w-xs">
           <button
             type="button"
             (click)="activeTab.set('precios')"
             [class]="
               activeTab() === 'precios'
-                ? 'bg-primary-soft text-ink font-semibold'
+                ? 'bg-white text-ink font-semibold shadow-xs'
                 : 'text-muted hover:text-ink'
             "
-            class="flex-1 rounded-full py-2 text-center text-caption font-medium transition-all cursor-pointer"
+            class="flex-1 rounded-full py-1.5 text-center text-caption font-medium transition-all cursor-pointer"
           >
             Precios
           </button>
@@ -197,10 +197,10 @@
             (click)="activeTab.set('resenas')"
             [class]="
               activeTab() === 'resenas'
-                ? 'bg-primary-soft text-ink font-semibold'
+                ? 'bg-white text-ink font-semibold shadow-xs'
                 : 'text-muted hover:text-ink'
             "
-            class="flex-1 rounded-full py-2 text-center text-caption font-medium transition-all cursor-pointer"
+            class="flex-1 rounded-full py-1.5 text-center text-caption font-medium transition-all cursor-pointer"
           >
             Reseñas
           </button>
@@ -209,10 +209,10 @@
             (click)="activeTab.set('sobre-mi')"
             [class]="
               activeTab() === 'sobre-mi'
-                ? 'bg-primary-soft text-ink font-semibold'
+                ? 'bg-white text-ink font-semibold shadow-xs'
                 : 'text-muted hover:text-ink'
             "
-            class="flex-1 rounded-full py-2 text-center text-caption font-medium transition-all cursor-pointer"
+            class="flex-1 rounded-full py-1.5 text-center text-caption font-medium transition-all cursor-pointer"
           >
             Sobre mí
           </button>
@@ -251,48 +251,153 @@
         }
 
         @if (activeTab() === 'resenas') {
-          <div class="space-y-4">
-            <div class="flex items-center justify-between">
-              <h3 class="font-display text-h3 font-bold text-ink">
-                Reseñas ({{ prof.reviews.length }})
-              </h3>
-              @if (prof.reviews.length > 0) {
+          <div class="space-y-5">
+            <div class="rounded-3xl border border-line bg-white p-6">
+              <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                <div class="sm:col-span-5 rounded-2xl bg-card p-6 text-center space-y-1.5">
+                  <span class="font-display text-5xl font-extrabold text-ink leading-none"
+                    >4,9</span
+                  >
+                  <div class="flex items-center justify-center gap-1 text-accent text-lg">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                  </div>
+                  <p class="text-caption text-muted">{{ prof.reviewsCount }} reseñas</p>
+                </div>
+
+                <div class="sm:col-span-7 space-y-2 text-tiny">
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">5 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 82%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">105</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">4 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 14%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">18</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">3 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 3%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">3</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">2 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 1%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">1</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span class="w-16 text-muted">1 estrellas</span>
+                    <div
+                      class="h-2 flex-1 rounded-full bg-surface overflow-hidden border border-line/40"
+                    >
+                      <div class="h-full rounded-full bg-accent" style="width: 1%"></div>
+                    </div>
+                    <span class="w-8 text-right font-medium text-ink">1</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('todas')"
+                [class]="
+                  activeReviewFilter() === 'todas'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                Todas
+              </button>
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('con-fotos')"
+                [class]="
+                  activeReviewFilter() === 'con-fotos'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                Con fotos
+              </button>
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('5-estrellas')"
+                [class]="
+                  activeReviewFilter() === '5-estrellas'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                5 estrellas
+              </button>
+              <button
+                type="button"
+                (click)="activeReviewFilter.set('recientes')"
+                [class]="
+                  activeReviewFilter() === 'recientes'
+                    ? 'bg-primary text-ink font-semibold'
+                    : 'bg-white border border-line text-muted hover:text-ink'
+                "
+                class="rounded-full px-4 py-1.5 text-caption transition-colors cursor-pointer"
+              >
+                Recientes
+              </button>
+            </div>
+
+            @if (filteredReviews().length === 0) {
+              <div class="rounded-2xl border border-line bg-surface p-8 text-center space-y-2">
+                <p class="font-display text-card-title font-semibold text-ink">
+                  No hay reseñas para este filtro
+                </p>
                 <button
                   type="button"
-                  class="text-caption font-semibold text-accent hover:underline cursor-pointer"
+                  (click)="activeReviewFilter.set('todas')"
+                  class="rounded-full bg-accent px-4 py-1.5 text-caption font-semibold text-white cursor-pointer"
                 >
                   Ver todas
                 </button>
-              }
-            </div>
-
-            @if (prof.reviews.length === 0) {
-              <div class="rounded-2xl border border-line bg-surface p-8 text-center space-y-2">
-                <p class="font-display text-card-title font-semibold text-ink">
-                  Este profesional aún no tiene reseñas
-                </p>
-                <p class="text-caption text-muted">
-                  Sé el primero en reservar y valorar su trabajo al finalizar el servicio.
-                </p>
               </div>
             } @else {
-              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                @for (review of prof.reviews; track review.id) {
+              <div class="space-y-3">
+                @for (review of filteredReviews(); track review.id) {
                   <div class="rounded-2xl border border-line bg-white p-5 space-y-3">
                     <div class="flex items-center gap-3">
                       <div
-                        class="flex size-9 items-center justify-center rounded-full bg-primary-soft font-display text-chip font-bold text-ink"
+                        class="flex size-10 items-center justify-center rounded-full bg-card font-display text-caption font-bold text-ink"
                       >
                         {{ review.initials }}
                       </div>
                       <div>
-                        <p class="text-card-title font-semibold text-ink leading-tight">
+                        <p
+                          class="font-display text-card-title font-semibold text-ink leading-tight"
+                        >
                           {{ review.author }}
                         </p>
                         <p class="text-tiny text-muted">{{ review.date }}</p>
                       </div>
                     </div>
-                    <div class="flex items-center gap-1 text-accent text-xs">
+                    <div class="flex items-center gap-1 text-accent text-sm">
                       <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
                     </div>
                     <p class="text-caption text-ink/90 leading-relaxed">{{ review.comment }}</p>
@@ -304,14 +409,52 @@
         }
 
         @if (activeTab() === 'sobre-mi') {
-          <div class="rounded-2xl border border-line bg-white p-6 space-y-3">
-            <h3 class="font-display text-card-title font-semibold text-ink">Presentación</h3>
-            <p class="text-body text-muted leading-relaxed">
-              Hola, soy {{ prof.name }}, profesional autónomo con más de
-              {{ prof.experienceYears }} años realizando reparaciones e instalaciones en Málaga
-              capital y alrededores. Garantía por escrito en todos los trabajos, materiales de
-              primera calidad y presupuesto cerrado sin sorpresas.
-            </p>
+          <div class="space-y-4">
+            <div class="rounded-3xl border border-line bg-white p-6 space-y-4">
+              <h3 class="font-display text-card-title font-semibold text-ink">Presentación</h3>
+              <p class="text-body text-muted leading-relaxed">
+                {{ prof.about }}
+              </p>
+
+              @if (prof.specialties && prof.specialties.length > 0) {
+                <div class="space-y-2 border-t border-line pt-4">
+                  <h4 class="text-caption font-semibold text-ink">Especialidades</h4>
+                  <div class="flex flex-wrap gap-2">
+                    @for (spec of prof.specialties; track spec) {
+                      <span
+                        class="rounded-full bg-surface border border-line px-3 py-1 text-tiny text-ink"
+                      >
+                        {{ spec }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (prof.serviceAreas && prof.serviceAreas.length > 0) {
+                <div class="space-y-2 border-t border-line pt-4">
+                  <h4 class="text-caption font-semibold text-ink">Zonas de servicio</h4>
+                  <div class="flex flex-wrap gap-2">
+                    @for (area of prof.serviceAreas; track area) {
+                      <span class="rounded-full bg-card px-3 py-1 text-tiny font-medium text-ink">
+                        📍 {{ area }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="rounded-2xl border border-line bg-card p-5 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="text-accent text-lg">🛡️</span>
+                <h4 class="font-display text-caption font-bold text-ink">Garantía ChapuZapp</h4>
+              </div>
+              <p class="text-tiny text-muted leading-relaxed">
+                Este profesional cuenta con identidad verificada, seguro de responsabilidad civil
+                activo y compromiso de calidad y satisfacción con soporte en cada cita.
+              </p>
+            </div>
           </div>
         }
       </div>
