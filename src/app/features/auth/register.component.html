@@ -41,6 +41,22 @@
       />
     </app-form-field>
 
+    <app-form-field
+      label="Repetir contraseña"
+      inputId="reg-repetir-password"
+      [error]="error('repetirPassword')"
+    >
+      <input
+        id="reg-repetir-password"
+        type="password"
+        formControlName="repetirPassword"
+        autocomplete="new-password"
+        placeholder="Escribe otra vez la contraseña"
+        [class.border-red-500]="error('repetirPassword')"
+        class="w-full rounded-xl border border-line bg-surface px-4 py-3 text-body text-ink placeholder:text-muted focus:border-accent focus:outline-none"
+      />
+    </app-form-field>
+
     <fieldset class="space-y-1.5">
       <legend class="font-display text-card-title font-medium text-ink">Tipo de cuenta</legend>
       <div class="grid grid-cols-2 gap-3">
