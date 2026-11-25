@@ -62,28 +62,62 @@
       <div class="grid grid-cols-2 gap-3">
         <label
           for="rol-cliente"
-          class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line bg-surface p-3 text-body font-medium text-ink hover:border-accent"
+          [class]="
+            form.controls.rol.value === 'CLIENTE'
+              ? 'border-accent bg-card'
+              : 'border-line bg-surface'
+          "
+          class="flex cursor-pointer items-center justify-center gap-2.5 rounded-xl border p-3 text-body font-medium text-ink transition-colors hover:border-accent"
         >
           <input
             id="rol-cliente"
             type="radio"
             formControlName="rol"
             value="CLIENTE"
-            class="accent-accent"
+            class="sr-only"
           />
+          <span
+            class="flex size-4.5 items-center justify-center rounded-full border border-line bg-white transition-colors"
+            [class]="
+              form.controls.rol.value === 'CLIENTE'
+                ? 'border-accent ring-2 ring-accent/20'
+                : 'border-muted/40'
+            "
+          >
+            @if (form.controls.rol.value === 'CLIENTE') {
+              <span class="size-2 rounded-full bg-accent"></span>
+            }
+          </span>
           <span>Cliente</span>
         </label>
         <label
           for="rol-profesional"
-          class="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-line bg-surface p-3 text-body font-medium text-ink hover:border-accent"
+          [class]="
+            form.controls.rol.value === 'PROFESIONAL'
+              ? 'border-accent bg-card'
+              : 'border-line bg-surface'
+          "
+          class="flex cursor-pointer items-center justify-center gap-2.5 rounded-xl border p-3 text-body font-medium text-ink transition-colors hover:border-accent"
         >
           <input
             id="rol-profesional"
             type="radio"
             formControlName="rol"
             value="PROFESIONAL"
-            class="accent-accent"
+            class="sr-only"
           />
+          <span
+            class="flex size-4.5 items-center justify-center rounded-full border border-line bg-white transition-colors"
+            [class]="
+              form.controls.rol.value === 'PROFESIONAL'
+                ? 'border-accent ring-2 ring-accent/20'
+                : 'border-muted/40'
+            "
+          >
+            @if (form.controls.rol.value === 'PROFESIONAL') {
+              <span class="size-2 rounded-full bg-accent"></span>
+            }
+          </span>
           <span>Profesional</span>
         </label>
       </div>

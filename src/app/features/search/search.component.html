@@ -223,60 +223,7 @@
   } @else {
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       @for (prof of paginatedProfessionals(); track prof.id) {
-        <a
-          [routerLink]="['/profesional', prof.id]"
-          class="group block rounded-3xl border border-line bg-white p-6 shadow-xs transition-all hover:border-accent hover:shadow-md cursor-pointer"
-        >
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex items-center gap-4">
-              <div
-                class="flex size-14 shrink-0 items-center justify-center rounded-full bg-card font-display text-card-title font-bold text-ink"
-              >
-                {{ prof.initials }}
-              </div>
-              <div class="space-y-0.5">
-                <div class="flex items-center gap-2">
-                  <h3
-                    class="font-display text-card-title font-bold text-ink group-hover:text-accent transition-colors"
-                  >
-                    {{ prof.name }}
-                  </h3>
-                  @if (prof.verified) {
-                    <span
-                      class="inline-flex items-center rounded-full bg-card px-2 py-0.5 text-tiny font-medium text-ink"
-                    >
-                      ✓ Verificado
-                    </span>
-                  }
-                </div>
-                <p class="text-caption text-muted">{{ prof.profession }} · {{ prof.distance }}</p>
-                <p class="text-tiny text-muted/80">📍 {{ prof.location }}</p>
-              </div>
-            </div>
-
-            <div class="text-right">
-              <span class="font-display text-h3 font-bold text-ink">{{ prof.pricePerHour }} €</span>
-              <span class="text-tiny text-muted block">/hora</span>
-            </div>
-          </div>
-
-          <div
-            class="mt-4 flex items-center justify-between border-t border-line/60 pt-4 text-caption"
-          >
-            <div class="flex items-center gap-1.5 font-semibold text-ink">
-              <span class="text-accent">★</span>
-              <span>{{ prof.rating }}</span>
-              <span class="font-normal text-muted">({{ prof.reviewsCount }} reseñas)</span>
-            </div>
-
-            <span
-              class="font-display text-caption font-semibold text-accent group-hover:underline flex items-center gap-1"
-            >
-              Ver perfil
-              <span>→</span>
-            </span>
-          </div>
-        </a>
+        <app-professional-card [professional]="prof" />
       }
     </div>
 

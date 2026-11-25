@@ -81,11 +81,7 @@
         <div class="rounded-3xl border border-line bg-white p-6 sm:p-8 space-y-6 shadow-xs">
           <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div class="flex items-center gap-4">
-              <div
-                class="flex size-20 shrink-0 items-center justify-center rounded-full bg-primary font-display text-2xl font-bold text-ink"
-              >
-                {{ prof.initials }}
-              </div>
+              <app-avatar [nombre]="prof.name" size="lg" />
               <div class="space-y-1">
                 <div class="flex flex-wrap items-center gap-2">
                   <h1 class="font-display text-2xl sm:text-3xl font-bold text-ink">
@@ -151,7 +147,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div class="grid grid-cols-3 gap-3">
             <div class="rounded-2xl border border-line bg-surface p-3.5">
               <p class="font-display text-card-title font-bold text-ink">
                 {{ prof.stats.experience }}
@@ -165,16 +161,8 @@
               <p class="text-tiny text-muted">Trabajos hechos</p>
             </div>
             <div class="rounded-2xl border border-line bg-surface p-3.5">
-              <p class="font-display text-card-title font-bold text-ink">
-                {{ prof.stats.responseTime }}
-              </p>
-              <p class="text-tiny text-muted">Tiempo de respuesta</p>
-            </div>
-            <div class="rounded-2xl border border-line bg-surface p-3.5">
-              <p class="font-display text-card-title font-bold text-ink truncate">
-                {{ prof.stats.schedule }}
-              </p>
-              <p class="text-tiny text-muted">Disponibilidad</p>
+              <p class="font-display text-card-title font-bold text-ink">Lun–Sáb</p>
+              <p class="text-tiny text-muted">08:00 – 20:00</p>
             </div>
           </div>
         </div>
@@ -383,11 +371,7 @@
                 @for (review of filteredReviews(); track review.id) {
                   <div class="rounded-2xl border border-line bg-white p-5 space-y-3">
                     <div class="flex items-center gap-3">
-                      <div
-                        class="flex size-10 items-center justify-center rounded-full bg-card font-display text-caption font-bold text-ink"
-                      >
-                        {{ review.initials }}
-                      </div>
+                      <app-avatar [nombre]="review.author" size="sm" />
                       <div>
                         <p
                           class="font-display text-card-title font-semibold text-ink leading-tight"

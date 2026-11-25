@@ -1,5 +1,6 @@
 import { Component, computed, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import {
   JAVIER_MORENO,
   MOCK_PROFESSIONALS,
@@ -13,7 +14,7 @@ type ReviewFilter = 'todas' | 'con-fotos' | '5-estrellas' | 'recientes';
 @Component({
   selector: 'app-professional-detail',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AvatarComponent],
   templateUrl: './professional-detail.component.html',
 })
 export class ProfessionalDetailComponent {

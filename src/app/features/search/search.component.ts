@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProfessionalCardComponent } from '../../shared/components/professional-card/professional-card.component';
 import { SEARCH_PROFESSIONALS, SearchProfessional } from './search.mock';
 
 type SortOption = 'valoracion' | 'precio' | 'cercania';
@@ -8,7 +9,7 @@ type SortOption = 'valoracion' | 'precio' | 'cercania';
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [FormsModule, ProfessionalCardComponent],
   templateUrl: './search.component.html',
 })
 export class SearchComponent implements OnInit {
