@@ -23,7 +23,7 @@ export class LoginComponent {
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
   error(campo: 'email' | 'password'): string | null {
@@ -31,6 +31,7 @@ export class LoginComponent {
     if (!control.touched || control.valid) return null;
     if (control.hasError('required')) return 'Este campo es obligatorio';
     if (control.hasError('email')) return 'Introduce un correo válido';
+    if (control.hasError('minlength')) return 'La contraseña debe tener al menos 8 caracteres';
     return null;
   }
 
