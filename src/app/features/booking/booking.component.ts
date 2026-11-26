@@ -1,4 +1,5 @@
-import { Component, inject, input } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit, inject, input } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,10 +8,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Franja, Servicio } from '../../shared/models/booking.model';
+import { CitasService } from '../../core/services/citas.service';
+import { Franja } from '../../shared/models/franja.model';
+import { Servicio } from '../../shared/models/servicio.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { FormFieldComponent } from '../../shared/components/form-field/form-field.component';
-import { FRANJAS_MOCK, SERVICIOS_MOCK } from './booking.mock';
 
 type CampoReserva = 'servicio' | 'fecha' | 'franja' | 'direccion';
 
@@ -36,21 +38,21 @@ function fechaNoPasada(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-booking',
-  imports: [ReactiveFormsModule, RouterLink, FormFieldComponent, ButtonComponent],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink, FormFieldComponent, ButtonComponent],
   template: `
     <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <h1 class="font-display text-h1 font-bold text-ink">Reservar una cita</h1>
       <p class="mt-2 text-body text-muted">Profesional: {{ id() }}</p>
 
       @if (estadoCarga === 'cargando') {
-        <p class="mt-6 text-body text-muted">Cargando servicios y horarios...</p>
+        <p class="mt-6 text-body text-muted">Cargando servicios...</p>
       } @else if (estadoCarga === 'error') {
         <div class="mt-6 rounded-xl border border-line bg-white p-4">
           <p class="text-body text-ink">
-            No hemos podido cargar los servicios y horarios. Inténtalo de nuevo.
+            No hemos podido cargar los servicios. Inténtalo de nuevo.
           </p>
           <div class="mt-3">
-            <app-button (click)="cargarDatos()">Reintentar</app-button>
+            <app-button (click)="cargarServicios()">Reintentar</app-button>
           </div>
         </div>
       } @else if (fase === 'formulario') {
@@ -92,20 +94,31 @@ function fechaNoPasada(control: AbstractControl): ValidationErrors | null {
               inputId="reserva-franja"
               [error]="error('franja')"
             >
-              <div id="reserva-franja" class="flex flex-wrap gap-2">
-                @for (franja of franjas; track franja.hora) {
-                  <button
-                    type="button"
-                    [disabled]="franja.ocupada"
-                    [class]="clasesFranja(franja)"
-                    class="rounded-lg border px-4 py-2.5 text-body font-semibold"
-                    (click)="elegirFranja(franja.hora)"
-                  >
-                    {{ franja.hora }}
-                  </button>
-                }
-              </div>
-              <p class="text-caption text-muted">Las franjas tachadas ya están ocupadas.</p>
+              @if (estadoFranjas === 'sin-fecha') {
+                <p class="text-body text-muted">Elige una fecha para ver los horarios.</p>
+              } @else if (estadoFranjas === 'cargando') {
+                <p class="text-body text-muted">Cargando horarios...</p>
+              } @else if (estadoFranjas === 'error') {
+                <div class="space-y-2">
+                  <p class="text-body text-ink">No hemos podido cargar los horarios.</p>
+                  <app-button variant="secondary" (click)="cargarFranjas()">Reintentar</app-button>
+                </div>
+              } @else {
+                <div id="reserva-franja" class="flex flex-wrap gap-2">
+                  @for (franja of franjas; track franja.inicio) {
+                    <button
+                      type="button"
+                      [disabled]="franja.ocupada"
+                      [class]="clasesFranja(franja)"
+                      class="rounded-lg border px-4 py-2.5 text-body font-semibold"
+                      (click)="elegirFranja(franja.inicio)"
+                    >
+                      {{ franja.inicio | date: 'HH:mm' }}
+                    </button>
+                  }
+                </div>
+                <p class="text-caption text-muted">Las franjas tachadas ya están ocupadas.</p>
+              }
             </app-form-field>
           </div>
 
@@ -156,7 +169,7 @@ function fechaNoPasada(control: AbstractControl): ValidationErrors | null {
             <div>
               <dt class="text-muted">Fecha y hora</dt>
               <dd class="font-semibold text-ink">
-                {{ fechaLegible }} a las {{ form.controls.franja.value }}
+                {{ fechaLegible }} a las {{ form.controls.franja.value | date: 'HH:mm' }}
               </dd>
             </div>
             <div>
@@ -176,7 +189,7 @@ function fechaNoPasada(control: AbstractControl): ValidationErrors | null {
               role="alert"
               class="mt-4 rounded-xl border border-red-500 bg-white px-4 py-2 text-body text-red-600"
             >
-              No hemos podido confirmar la reserva. Inténtalo de nuevo.
+              No hemos podido confirmar la reserva: {{ errorEnvio }}.
             </p>
           }
 
@@ -207,20 +220,20 @@ function fechaNoPasada(control: AbstractControl): ValidationErrors | null {
     </div>
   `,
 })
-export class BookingComponent {
+export class BookingComponent implements OnInit {
   private fb = inject(FormBuilder);
+  private citasService = inject(CitasService);
 
   id = input<string>('');
-  servicios = SERVICIOS_MOCK;
-  franjas = FRANJAS_MOCK;
   hoy = hoyISO();
   fase: 'formulario' | 'resumen' | 'exito' = 'formulario';
 
+  servicios: Servicio[] = [];
+  franjas: Franja[] = [];
   estadoCarga: 'cargando' | 'error' | 'listo' = 'cargando';
+  estadoFranjas: 'sin-fecha' | 'cargando' | 'error' | 'listo' = 'sin-fecha';
   enviando = false;
-  errorEnvio = false;
-  simularErrorCarga = false;
-  simularErrorEnvio = false;
+  errorEnvio: string | null = null;
 
   form = this.fb.nonNullable.group({
     servicio: ['', Validators.required],
@@ -231,7 +244,19 @@ export class BookingComponent {
   });
 
   constructor() {
-    this.cargarDatos();
+    this.form.controls.fecha.valueChanges.subscribe(() => {
+      this.form.controls.franja.setValue('');
+      this.form.controls.franja.markAsUntouched();
+      this.cargarFranjas();
+    });
+  }
+
+  ngOnInit(): void {
+    this.cargarServicios();
+  }
+
+  get profesionalId(): number {
+    return Number(this.id());
   }
 
   get servicioElegido(): Servicio | undefined {
@@ -243,11 +268,42 @@ export class BookingComponent {
     return `${dia}/${mes}/${anio}`;
   }
 
-  cargarDatos(): void {
+  cargarServicios(): void {
     this.estadoCarga = 'cargando';
-    setTimeout(() => {
-      this.estadoCarga = this.simularErrorCarga ? 'error' : 'listo';
-    }, 600);
+    this.citasService.serviciosDe(this.profesionalId).subscribe({
+      next: (servicios) => {
+        this.servicios = servicios;
+        this.estadoCarga = 'listo';
+      },
+      error: () => {
+        this.estadoCarga = 'error';
+      },
+    });
+  }
+
+  cargarFranjas(): void {
+    const fecha = this.form.controls.fecha.value;
+    this.franjas = [];
+    if (!fecha || this.form.controls.fecha.hasError('fechaPasada')) {
+      this.estadoFranjas = 'sin-fecha';
+      return;
+    }
+    this.estadoFranjas = 'cargando';
+    this.citasService.franjasDisponibles(this.profesionalId, fecha).subscribe({
+      next: (franjas) => {
+        if (fecha !== this.form.controls.fecha.value) return;
+        const elegida = this.form.controls.franja.value;
+        if (franjas.some((f) => f.inicio === elegida && f.ocupada)) {
+          this.form.controls.franja.setValue('');
+        }
+        this.franjas = franjas;
+        this.estadoFranjas = 'listo';
+      },
+      error: () => {
+        if (fecha !== this.form.controls.fecha.value) return;
+        this.estadoFranjas = 'error';
+      },
+    });
   }
 
   error(campo: CampoReserva): string | null {
@@ -260,12 +316,12 @@ export class BookingComponent {
 
   clasesFranja(franja: Franja): string {
     if (franja.ocupada) return 'border-line bg-busy text-busy-text line-through cursor-not-allowed';
-    if (this.form.controls.franja.value === franja.hora) return 'border-ink bg-ink text-white';
+    if (this.form.controls.franja.value === franja.inicio) return 'border-ink bg-ink text-white';
     return 'border-line bg-white text-ink hover:border-accent';
   }
 
-  elegirFranja(hora: string): void {
-    this.form.controls.franja.setValue(hora);
+  elegirFranja(inicio: string): void {
+    this.form.controls.franja.setValue(inicio);
     this.form.controls.franja.markAsTouched();
   }
 
@@ -278,20 +334,32 @@ export class BookingComponent {
   }
 
   editar(): void {
-    this.errorEnvio = false;
+    this.errorEnvio = null;
     this.fase = 'formulario';
+    this.cargarFranjas();
   }
 
   confirmar(): void {
+    const datos = this.form.getRawValue();
     this.enviando = true;
-    this.errorEnvio = false;
-    setTimeout(() => {
-      this.enviando = false;
-      if (this.simularErrorEnvio) {
-        this.errorEnvio = true;
-        return;
-      }
-      this.fase = 'exito';
-    }, 800);
+    this.errorEnvio = null;
+    this.citasService
+      .crearReserva({
+        profesionalId: this.profesionalId,
+        servicioId: Number(datos.servicio),
+        inicio: datos.franja,
+        direccion: datos.direccion,
+        nota: datos.descripcion || null,
+      })
+      .subscribe({
+        next: () => {
+          this.enviando = false;
+          this.fase = 'exito';
+        },
+        error: (e: Error) => {
+          this.enviando = false;
+          this.errorEnvio = e.message;
+        },
+      });
   }
 }

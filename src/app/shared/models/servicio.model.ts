@@ -3,8 +3,3 @@ export interface Servicio {
   nombre: string;
   precio: number;
 }
-
-export interface Franja {
-  hora: string;
-  ocupada: boolean;
-}
