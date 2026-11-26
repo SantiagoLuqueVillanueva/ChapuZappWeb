@@ -1,104 +1,104 @@
-import { Component } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Appointment } from '../../shared/models/appointment.model';
+import { CitasService } from '../../core/services/citas.service';
+import { CitaCliente, TipoCitas } from '../../shared/models/cita.model';
+
+type Etiqueta = 'Pendiente' | 'Confirmada' | 'Completada' | 'Cancelada';
 
 @Component({
   selector: 'app-appointments',
   standalone: true,
-  imports: [RouterLink],
+  imports: [DatePipe, RouterLink],
   template: `
     <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <h1 class="font-display text-h1 font-bold text-ink">Mis citas</h1>
 
+      <div class="mt-6 flex gap-2">
+        <button
+          type="button"
+          class="rounded-lg px-4 py-2.5 font-display text-card-title font-semibold"
+          [class]="
+            pestana === 'proximas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'
+          "
+          (click)="cambiarPestana('proximas')"
+        >
+          Próximas
+        </button>
+        <button
+          type="button"
+          class="rounded-lg px-4 py-2.5 font-display text-card-title font-semibold"
+          [class]="
+            pestana === 'pasadas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'
+          "
+          (click)="cambiarPestana('pasadas')"
+        >
+          Pasadas
+        </button>
+      </div>
+
       @if (estado === 'cargando') {
         <p class="mt-6 text-body text-muted">Cargando tus citas...</p>
-      }
-
-      @if (estado === 'error') {
+      } @else if (estado === 'error') {
         <div class="mt-6 rounded-lg border border-line bg-white p-4">
           <p class="text-body text-ink">No hemos podido cargar tus citas. Inténtalo de nuevo.</p>
           <button
             type="button"
             class="mt-3 rounded-lg bg-ink px-4 py-2.5 font-semibold text-white"
-            (click)="cargarCitas()"
+            (click)="cargar()"
           >
             Reintentar
           </button>
         </div>
-      }
-
-      @if (estado === 'listo') {
-        <div class="mt-6 flex gap-2">
-          <button
-            type="button"
-            class="rounded-lg px-4 py-2.5 font-display text-card-title font-semibold"
-            [class]="
-              pestana === 'proximas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'
-            "
-            (click)="pestana = 'proximas'"
+      } @else if (citas.length === 0) {
+        <div class="mt-6 rounded-lg border border-line bg-card p-6 text-center">
+          <p class="text-body text-ink">
+            {{ pestana === 'proximas' ? 'No tienes citas próximas.' : 'No tienes citas pasadas.' }}
+          </p>
+          <a
+            routerLink="/buscar"
+            class="mt-4 inline-block rounded-lg bg-ink px-4 py-2.5 font-semibold text-white"
           >
-            Próximas
-          </button>
-          <button
-            type="button"
-            class="rounded-lg px-4 py-2.5 font-display text-card-title font-semibold"
-            [class]="
-              pestana === 'pasadas' ? 'bg-ink text-white' : 'bg-white text-ink border border-line'
-            "
-            (click)="pestana = 'pasadas'"
-          >
-            Pasadas
-          </button>
+            Buscar profesionales
+          </a>
         </div>
-
-        @if (citasMostradas.length === 0) {
-          <div class="mt-6 rounded-lg border border-line bg-card p-6 text-center">
-            <p class="text-body text-ink">
-              {{
-                pestana === 'proximas' ? 'No tienes citas próximas.' : 'No tienes citas pasadas.'
-              }}
-            </p>
-            <a
-              routerLink="/buscar"
-              class="mt-4 inline-block rounded-lg bg-ink px-4 py-2.5 font-semibold text-white"
+      } @else {
+        <ul class="mt-6 space-y-4">
+          @for (cita of citas; track cita.idCita) {
+            <li
+              class="flex items-start justify-between gap-4 rounded-lg border border-line bg-card p-4"
             >
-              Buscar profesionales
-            </a>
-          </div>
-        } @else {
-          <ul class="mt-6 space-y-4">
-            @for (cita of citasMostradas; track cita.id) {
-              <li
-                class="flex items-start justify-between gap-4 rounded-lg border border-line bg-card p-4"
-              >
-                <div>
-                  <p class="font-display text-card-title font-semibold text-ink">
-                    {{ cita.professionalName }}
-                  </p>
-                  <p class="text-body text-muted">{{ cita.service }}</p>
-                  <p class="text-body text-muted">{{ cita.date }} · {{ cita.time }}</p>
-                </div>
-                <div class="flex flex-col items-end gap-2">
-                  <span
-                    class="rounded-full px-3 py-1 text-chip font-semibold capitalize"
-                    [class]="clasesEstado[cita.status]"
+              <div>
+                <p class="font-display text-card-title font-semibold text-ink">
+                  {{ cita.profesional.nombre }}
+                </p>
+                <p class="text-body text-muted">
+                  {{ cita.servicio.nombre }} · {{ cita.servicio.precio }} €
+                </p>
+                <p class="text-body text-muted">
+                  {{ cita.inicio | date: 'dd/MM/yyyy' }} · {{ cita.inicio | date: 'HH:mm' }}
+                </p>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <span
+                  class="rounded-full px-3 py-1 text-chip font-semibold"
+                  [class]="clasesEtiqueta[etiqueta(cita)]"
+                >
+                  {{ etiqueta(cita) }}
+                </span>
+                @if (pestana === 'proximas') {
+                  <button
+                    type="button"
+                    class="rounded-lg border border-line bg-white px-4 py-2 text-body font-semibold text-ink"
+                    (click)="pedirCancelar(cita)"
                   >
-                    {{ cita.status }}
-                  </span>
-                  @if (puedeCancelar(cita)) {
-                    <button
-                      type="button"
-                      class="rounded-lg border border-line bg-white px-4 py-2 text-body font-semibold text-ink"
-                      (click)="pedirCancelar(cita)"
-                    >
-                      Cancelar
-                    </button>
-                  }
-                </div>
-              </li>
-            }
-          </ul>
-        }
+                    Cancelar
+                  </button>
+                }
+              </div>
+            </li>
+          }
+        </ul>
       }
 
       @if (citaACancelar) {
@@ -106,23 +106,36 @@ import { Appointment } from '../../shared/models/appointment.model';
           <div class="w-full max-w-sm rounded-lg bg-white p-6">
             <h2 class="font-display text-h2 font-bold text-ink">¿Cancelar esta cita?</h2>
             <p class="mt-2 text-body text-muted">
-              {{ citaACancelar.service }} con {{ citaACancelar.professionalName }} el
-              {{ citaACancelar.date }} a las {{ citaACancelar.time }}.
+              {{ citaACancelar.servicio.nombre }} con {{ citaACancelar.profesional.nombre }} el
+              {{ citaACancelar.inicio | date: 'dd/MM/yyyy' }} a las
+              {{ citaACancelar.inicio | date: 'HH:mm' }}.
             </p>
+
+            @if (errorCancelar) {
+              <p
+                role="alert"
+                class="mt-4 rounded-xl border border-red-500 bg-white px-4 py-2 text-body text-red-600"
+              >
+                No hemos podido cancelar la cita. Inténtalo de nuevo.
+              </p>
+            }
+
             <div class="mt-6 flex justify-end gap-2">
               <button
                 type="button"
-                class="rounded-lg border border-line bg-white px-4 py-2.5 font-semibold text-ink"
+                class="rounded-lg border border-line bg-white px-4 py-2.5 font-semibold text-ink disabled:cursor-not-allowed disabled:opacity-50"
+                [disabled]="cancelando"
                 (click)="cerrarDialogo()"
               >
                 Volver
               </button>
               <button
                 type="button"
-                class="rounded-lg bg-ink px-4 py-2.5 font-semibold text-white"
+                class="rounded-lg bg-ink px-4 py-2.5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                [disabled]="cancelando"
                 (click)="confirmarCancelar()"
               >
-                Sí, cancelar
+                {{ cancelando ? 'Cancelando...' : errorCancelar ? 'Reintentar' : 'Sí, cancelar' }}
               </button>
             </div>
           </div>
@@ -132,88 +145,79 @@ import { Appointment } from '../../shared/models/appointment.model';
   `,
 })
 export class AppointmentsComponent {
+  private citasService = inject(CitasService);
+
   estado: 'cargando' | 'error' | 'listo' = 'cargando';
-  simularError = false;
+  pestana: TipoCitas = 'proximas';
+  citas: CitaCliente[] = [];
 
-  pestana: 'proximas' | 'pasadas' = 'proximas';
-  citaACancelar: Appointment | null = null;
+  citaACancelar: CitaCliente | null = null;
+  cancelando = false;
+  errorCancelar = false;
 
-  clasesEstado: Record<Appointment['status'], string> = {
-    pendiente: 'bg-primary-soft text-ink',
-    confirmada: 'bg-primary text-ink',
-    completada: 'bg-busy text-busy-text',
-    cancelada: 'bg-white text-muted border border-line',
+  clasesEtiqueta: Record<Etiqueta, string> = {
+    Pendiente: 'bg-primary-soft text-ink',
+    Confirmada: 'bg-primary text-ink',
+    Completada: 'bg-busy text-busy-text',
+    Cancelada: 'bg-white text-muted border border-line',
   };
 
   constructor() {
-    this.cargarCitas();
+    this.cargar();
   }
 
-  cargarCitas(): void {
+  cargar(): void {
+    const pestana = this.pestana;
     this.estado = 'cargando';
-    setTimeout(() => {
-      this.estado = this.simularError ? 'error' : 'listo';
-    }, 600);
-  }
-
-  get citasMostradas(): Appointment[] {
-    return this.citas.filter((cita) => {
-      const esProxima = cita.status === 'pendiente' || cita.status === 'confirmada';
-      return this.pestana === 'proximas' ? esProxima : !esProxima;
+    this.citasService.misCitas(pestana).subscribe({
+      next: (citas) => {
+        if (pestana !== this.pestana) return;
+        this.citas = citas;
+        this.estado = 'listo';
+      },
+      error: () => {
+        if (pestana !== this.pestana) return;
+        this.estado = 'error';
+      },
     });
   }
 
-  puedeCancelar(cita: Appointment): boolean {
-    return cita.status === 'pendiente' || cita.status === 'confirmada';
+  cambiarPestana(pestana: TipoCitas): void {
+    this.pestana = pestana;
+    this.cargar();
   }
 
-  pedirCancelar(cita: Appointment): void {
+  etiqueta(cita: CitaCliente): Etiqueta {
+    if (cita.estado === 'CANCELADA') return 'Cancelada';
+    if (cita.estado === 'PENDIENTE') return 'Pendiente';
+    return new Date(cita.inicio) > new Date() ? 'Confirmada' : 'Completada';
+  }
+
+  pedirCancelar(cita: CitaCliente): void {
+    this.errorCancelar = false;
     this.citaACancelar = cita;
   }
 
   cerrarDialogo(): void {
     this.citaACancelar = null;
+    this.errorCancelar = false;
   }
 
   confirmarCancelar(): void {
-    if (this.citaACancelar) {
-      this.citaACancelar.status = 'cancelada';
-    }
-    this.citaACancelar = null;
+    const cita = this.citaACancelar;
+    if (!cita) return;
+    this.cancelando = true;
+    this.errorCancelar = false;
+    this.citasService.cancelar(cita.idCita).subscribe({
+      next: () => {
+        this.cancelando = false;
+        this.citaACancelar = null;
+        this.cargar();
+      },
+      error: () => {
+        this.cancelando = false;
+        this.errorCancelar = true;
+      },
+    });
   }
-
-  citas: Appointment[] = [
-    {
-      id: 1,
-      professionalName: 'Laura Gómez',
-      service: 'Fontanería',
-      date: '2026-12-03',
-      time: '10:30',
-      status: 'confirmada',
-    },
-    {
-      id: 2,
-      professionalName: 'Carlos Ruiz',
-      service: 'Electricidad',
-      date: '2026-12-10',
-      time: '16:00',
-      status: 'pendiente',
-    },
-    {
-      id: 3,
-      professionalName: 'Marta Díaz',
-      service: 'Pintura',
-      date: '2026-11-05',
-      time: '09:00',
-      status: 'completada',
-    },
-    {
-      id: 4,
-      professionalName: 'Pablo Ortega',
-      service: 'Cerrajería',
-      date: '2026-11-18',
-      time: '12:15',
-      status: 'cancelada',
-    },
-  ];
 }
