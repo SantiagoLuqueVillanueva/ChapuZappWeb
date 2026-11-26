@@ -142,10 +142,12 @@
 
   <div class="flex items-center justify-between">
     <p class="text-caption text-muted">
-      Mostrando <span class="font-bold text-ink">{{ totalResults() }}</span> profesionales
+      Mostrando <span class="font-bold text-ink">{{ result().total }}</span> profesionales
       disponibles
-      @if (totalResults() > 0) {
-        <span class="text-muted/70"> · Página {{ currentPage() }} de {{ totalPages() }}</span>
+      @if (result().total > 0) {
+        <span class="text-muted/70">
+          · Página {{ currentPage() }} de {{ result().totalPages }}</span
+        >
       }
     </p>
 
@@ -197,7 +199,7 @@
         </div>
       }
     </div>
-  } @else if (paginatedProfessionals().length === 0) {
+  } @else if (result().items.length === 0) {
     <div class="rounded-3xl border border-line bg-surface p-12 text-center space-y-4">
       <div
         class="mx-auto flex size-14 items-center justify-center rounded-full bg-card text-2xl text-accent"
@@ -222,12 +224,12 @@
     </div>
   } @else {
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      @for (prof of paginatedProfessionals(); track prof.id) {
+      @for (prof of result().items; track prof.id) {
         <app-professional-card [professional]="prof" />
       }
     </div>
 
-    @if (totalPages() > 1) {
+    @if (result().totalPages > 1) {
       <nav
         class="flex items-center justify-center gap-2 pt-6"
         aria-label="Paginación de resultados"
@@ -241,7 +243,7 @@
           ← Anterior
         </button>
 
-        @for (page of [].constructor(totalPages()); track $index) {
+        @for (page of [].constructor(result().totalPages); track $index) {
           <button
             type="button"
             (click)="goToPage($index + 1)"
@@ -259,7 +261,7 @@
         <button
           type="button"
           (click)="goToPage(currentPage() + 1)"
-          [disabled]="currentPage() === totalPages()"
+          [disabled]="currentPage() === result().totalPages"
           class="rounded-full border border-line bg-white px-4 py-2 text-caption font-medium text-ink transition-colors hover:bg-card disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           Siguiente →

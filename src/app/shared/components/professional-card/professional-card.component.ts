@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AvatarComponent } from '../avatar/avatar.component';
-import { SearchProfessional } from '../../../features/search/search.mock';
+import { SearchProfessional } from '../../models/professional.model';
 
 @Component({
   selector: 'app-professional-card',

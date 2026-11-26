@@ -1,10 +1,13 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ProfessionalService } from '../../core/services/professional.service';
+import {
+  PagedResult,
+  SearchProfessional,
+  SortOption,
+} from '../../shared/models/professional.model';
 import { ProfessionalCardComponent } from '../../shared/components/professional-card/professional-card.component';
-import { SEARCH_PROFESSIONALS, SearchProfessional } from './search.mock';
-
-type SortOption = 'valoracion' | 'precio' | 'cercania';
 
 @Component({
   selector: 'app-search',
@@ -15,6 +18,7 @@ type SortOption = 'valoracion' | 'precio' | 'cercania';
 export class SearchComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly professionalService = inject(ProfessionalService);
 
   readonly searchQuery = signal('');
   readonly selectedSector = signal('todos');
@@ -26,6 +30,14 @@ export class SearchComponent implements OnInit {
 
   readonly isLoading = signal(false);
   readonly hasError = signal(false);
+
+  readonly result = signal<PagedResult<SearchProfessional>>({
+    items: [],
+    total: 0,
+    page: 1,
+    pageSize: 6,
+    totalPages: 1,
+  });
 
   readonly sectors = [
     'todos',
@@ -49,74 +61,11 @@ export class SearchComponent implements OnInit {
     'Cerrajero',
   ];
 
-  readonly allProfessionals = signal<SearchProfessional[]>(SEARCH_PROFESSIONALS);
-
-  readonly filteredProfessionals = computed(() => {
-    const query = this.searchQuery().trim().toLowerCase();
-    const sector = this.selectedSector();
-    const price = this.maxPrice();
-    const rating = this.minRating();
-    const sort = this.sortBy();
-
-    const result = this.allProfessionals().filter((prof) => {
-      if (query) {
-        const matchesName = prof.name.toLowerCase().includes(query);
-        const matchesProfession = prof.profession.toLowerCase().includes(query);
-        const matchesSector = prof.sector.toLowerCase().includes(query);
-        if (!matchesName && !matchesProfession && !matchesSector) {
-          return false;
-        }
-      }
-
-      if (sector !== 'todos' && prof.sector !== sector) {
-        return false;
-      }
-
-      if (price > 0 && prof.pricePerHour > price) {
-        return false;
-      }
-
-      if (rating > 0 && prof.rating < rating) {
-        return false;
-      }
-
-      return true;
-    });
-
-    result.sort((a, b) => {
-      if (sort === 'precio') {
-        return a.pricePerHour - b.pricePerHour;
-      }
-      if (sort === 'cercania') {
-        return a.distanceKm - b.distanceKm;
-      }
-      return b.rating - a.rating;
-    });
-
-    return result;
-  });
-
-  readonly totalResults = computed(() => this.filteredProfessionals().length);
-
-  readonly totalPages = computed(() => {
-    const total = this.totalResults();
-    return total === 0 ? 1 : Math.ceil(total / this.pageSize);
-  });
-
-  readonly paginatedProfessionals = computed(() => {
-    const page = Math.min(this.currentPage(), this.totalPages());
-    const startIndex = (page - 1) * this.pageSize;
-    return this.filteredProfessionals().slice(startIndex, startIndex + this.pageSize);
-  });
-
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
-      if (params['q'] !== undefined) {
-        this.searchQuery.set(params['q']);
-      }
-      if (params['sector'] && this.sectors.includes(params['sector'])) {
+      if (params['q'] !== undefined) this.searchQuery.set(params['q']);
+      if (params['sector'] && this.sectors.includes(params['sector']))
         this.selectedSector.set(params['sector']);
-      }
       if (params['precioMax']) {
         const p = Number(params['precioMax']);
         this.maxPrice.set(isNaN(p) ? 0 : p);
@@ -125,23 +74,48 @@ export class SearchComponent implements OnInit {
         const r = Number(params['minRating']);
         this.minRating.set(isNaN(r) ? 0 : r);
       }
-      if (params['sort'] && ['valoracion', 'precio', 'cercania'].includes(params['sort'])) {
+      if (params['sort'] && ['valoracion', 'precio', 'cercania'].includes(params['sort']))
         this.sortBy.set(params['sort'] as SortOption);
-      }
       if (params['page']) {
         const pageNum = parseInt(params['page'], 10);
         this.currentPage.set(isNaN(pageNum) || pageNum < 1 ? 1 : pageNum);
       }
+      this.fetchResults();
     });
   }
 
-  onSearchSubmit(): void {
-    this.currentPage.set(1);
-    this.syncUrlParams();
+  private fetchResults(): void {
+    this.isLoading.set(true);
+    this.hasError.set(false);
+    this.professionalService
+      .search({
+        query: this.searchQuery(),
+        sector: this.selectedSector(),
+        maxPrice: this.maxPrice(),
+        minRating: this.minRating(),
+        sortBy: this.sortBy(),
+        page: this.currentPage(),
+        pageSize: this.pageSize,
+      })
+      .subscribe({
+        next: (data) => {
+          this.result.set(data);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.hasError.set(true);
+          this.isLoading.set(false);
+        },
+      });
   }
 
   onSearchInput(value: string): void {
     this.searchQuery.set(value);
+    this.currentPage.set(1);
+    this.syncUrlParams();
+  }
+
+  onSearchSubmit(): void {
     this.currentPage.set(1);
     this.syncUrlParams();
   }
@@ -177,7 +151,7 @@ export class SearchComponent implements OnInit {
   }
 
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages()) {
+    if (page >= 1 && page <= this.result().totalPages) {
       this.currentPage.set(page);
       this.syncUrlParams();
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -202,11 +176,7 @@ export class SearchComponent implements OnInit {
   }
 
   retry(): void {
-    this.hasError.set(false);
-    this.isLoading.set(true);
-    setTimeout(() => {
-      this.isLoading.set(false);
-    }, 400);
+    this.fetchResults();
   }
 
   private syncUrlParams(): void {
