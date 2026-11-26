@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, defer, delay, of, throwError } from 'rxjs';
 import { CitaAgenda, CitaCliente, EstadoCita, NuevaCita, TipoCitas } from '../../shared/models/cita.model';
 import { Franja } from '../../shared/models/franja.model';
-import { Horario } from '../../shared/models/horario.model';
+import { Horario, TramoHorario } from '../../shared/models/horario.model';
 import { Servicio } from '../../shared/models/servicio.model';
 import { AuthService } from './auth.service';
 import { CITAS_MOCK, HORARIO_MOCK, PROFESIONALES_MOCK, ProfesionalMock, SERVICIOS_MOCK, ServicioMock } from './citas.mock';
@@ -144,10 +144,10 @@ export class CitasService {
     });
   }
 
-  guardarHorario(nuevo: Horario[]): Observable<Horario[]> {
+   guardarHorario(tramos: TramoHorario[]): Observable<Horario[]> {
     return this.responder(() => {
       const profesionalId = this.profesionalActual().idProfesional;
-      const guardado = nuevo.map((h, i) => ({ ...h, idHorario: i + 1, profesionalId }));
+      const guardado = tramos.map((t, i) => ({ ...t, idHorario: i + 1, profesionalId }));
       this.horarios = [
         ...this.horarios.filter((h) => h.profesionalId !== profesionalId),
         ...guardado,
